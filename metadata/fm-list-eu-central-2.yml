@@ -1,0 +1,90 @@
+models:
+- model_id: amazon.titan-embed-text-v2:0
+  provider: Amazon
+  inference_types:
+  - ON_DEMAND
+  endpoints:
+    base:
+      quotas:
+        tpm: L-DE641971
+        rpm: L-26C560CE
+        tpd: null
+        concurrent: null
+- model_id: amazon.titan-embed-text-v2:0:8k
+  provider: Amazon
+  inference_types: []
+- model_id: anthropic.claude-3-5-sonnet-20240620-v1:0
+  provider: Anthropic
+  inference_types:
+  - ON_DEMAND
+  endpoints:
+    base:
+      quotas:
+        tpm: L-A50569E5
+        rpm: L-254CACF4
+        tpd: null
+        concurrent: null
+- model_id: anthropic.claude-3-haiku-20240307-v1:0
+  provider: Anthropic
+  inference_types:
+  - ON_DEMAND
+  endpoints:
+    base:
+      quotas:
+        tpm: L-8CE99163
+        rpm: L-2DC80978
+        tpd: null
+        concurrent: null
+- model_id: anthropic.claude-haiku-4-5-20251001-v1:0
+  provider: Anthropic
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - eu
+  - global
+  endpoints:
+    eu:
+      quotas:
+        tpm: L-58BE175A
+        rpm: L-CCA5DF70
+        tpd: L-6120CF2D
+        concurrent: null
+    global:
+      quotas:
+        tpm: L-9A11C666
+        rpm: L-E5084BBA
+        tpd: L-B5C049AE
+        concurrent: null
+- model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
+  provider: Anthropic
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - eu
+  - global
+  endpoints:
+    eu:
+      quotas:
+        tpm: L-8EA73537
+        rpm: L-A052927A
+        tpd: L-E107194C
+        concurrent: null
+    global:
+      quotas:
+        tpm: L-27C57EE8
+        rpm: L-DB84CE56
+        tpd: L-BC182137
+        concurrent: null
+- model_id: cohere.embed-v4:0
+  provider: Cohere
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - global
+  endpoints:
+    global:
+      quotas:
+        tpm: L-02DFBB76
+        rpm: L-7089DC7D
+        tpd: L-795ADAB0
+        concurrent: null

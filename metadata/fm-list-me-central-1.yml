@@ -1,0 +1,67 @@
+models:
+- model_id: amazon.nova-lite-v1:0
+  provider: Amazon
+  inference_types:
+  - INFERENCE_PROFILE
+  - ON_DEMAND
+  inference_profiles:
+  - apac
+  endpoints:
+    base:
+      quotas:
+        tpm: L-70423BF8
+        rpm: L-E386A278
+        tpd: null
+        concurrent: null
+    apac:
+      quotas:
+        tpm: L-7C42E72A
+        rpm: L-89F8391A
+        tpd: null
+        concurrent: null
+- model_id: amazon.nova-micro-v1:0
+  provider: Amazon
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - apac
+  endpoints:
+    apac:
+      quotas:
+        tpm: L-DC7FF66C
+        rpm: L-3F110E0F
+        tpd: null
+        concurrent: null
+- model_id: amazon.nova-pro-v1:0
+  provider: Amazon
+  inference_types:
+  - INFERENCE_PROFILE
+  - ON_DEMAND
+  inference_profiles:
+  - apac
+  endpoints:
+    base:
+      quotas:
+        tpm: L-CE33604C
+        rpm: L-F2717A44
+        tpd: null
+        concurrent: null
+    apac:
+      quotas:
+        tpm: L-C0326783
+        rpm: L-ED46B8C5
+        tpd: null
+        concurrent: null
+- model_id: anthropic.claude-sonnet-4-20250514-v1:0
+  provider: Anthropic
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - apac
+  endpoints:
+    apac:
+      quotas:
+        tpm: L-59759B4A
+        rpm: L-559DCC33
+        tpd: L-22F701C5
+        concurrent: null

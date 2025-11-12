@@ -1,0 +1,15 @@
+rules:
+  # Disable AI detection rules - these are false positives for Bedrock model IDs
+  # This project analyzes Bedrock foundation models, so references to Anthropic and OpenAI
+  # model IDs are legitimate business logic, not actual AI service usage
+  - id: disable-ai-detection
+    patterns:
+      - pattern: $X
+    message: "AI detection rules disabled for this project"
+    languages: [python, yaml]
+    severity: INFO
+    options:
+      # Disable specific Semgrep AI detection rules
+      disable_rules:
+        - ai.generic.detect-generic-ai-anthprop
+        - ai.generic.detect-generic-ai-oai

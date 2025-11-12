@@ -1,0 +1,6 @@
+.amazonq/
+results/
+dev/tmp/
+*.DS_Store
+__pycache__/
+.venv/

@@ -1,0 +1,93 @@
+models:
+- model_id: amazon.titan-embed-text-v2:0
+  provider: Amazon
+  inference_types:
+  - ON_DEMAND
+  endpoints:
+    base:
+      quotas:
+        tpm: L-DE641971
+        rpm: L-26C560CE
+        tpd: null
+        concurrent: null
+- model_id: amazon.titan-embed-text-v2:0:8k
+  provider: Amazon
+  inference_types: []
+- model_id: anthropic.claude-3-5-sonnet-20241022-v2:0
+  provider: Anthropic
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - apac
+  endpoints:
+    apac:
+      quotas:
+        tpm: L-FF8B4E28
+        rpm: L-1D3E59A3
+        tpd: null
+        concurrent: null
+- model_id: anthropic.claude-3-7-sonnet-20250219-v1:0
+  provider: Anthropic
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - apac
+  endpoints:
+    apac:
+      quotas:
+        tpm: L-6E888CC2
+        rpm: L-3D8CC480
+        tpd: L-9EB71894
+        concurrent: null
+- model_id: anthropic.claude-haiku-4-5-20251001-v1:0
+  provider: Anthropic
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - global
+  endpoints:
+    global:
+      quotas:
+        tpm: L-9A11C666
+        rpm: L-E5084BBA
+        tpd: L-B5C049AE
+        concurrent: null
+- model_id: anthropic.claude-sonnet-4-20250514-v1:0
+  provider: Anthropic
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - apac
+  endpoints:
+    apac:
+      quotas:
+        tpm: L-59759B4A
+        rpm: L-559DCC33
+        tpd: L-22F701C5
+        concurrent: null
+- model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
+  provider: Anthropic
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - global
+  endpoints:
+    global:
+      quotas:
+        tpm: L-27C57EE8
+        rpm: L-DB84CE56
+        tpd: L-BC182137
+        concurrent: null
+- model_id: cohere.embed-v4:0
+  provider: Cohere
+  inference_types:
+  - INFERENCE_PROFILE
+  inference_profiles:
+  - global
+  endpoints:
+    global:
+      quotas:
+        tpm: L-02DFBB76
+        rpm: L-7089DC7D
+        tpd: L-795ADAB0
+        concurrent: null
