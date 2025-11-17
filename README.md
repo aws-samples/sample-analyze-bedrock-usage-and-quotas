@@ -171,6 +171,30 @@ Example with region restriction:
 
 ## 🛠️ Setup Guide
 
+### Installation
+
+This tool is now packaged as a proper Python package. You can install it in two ways:
+
+#### Option 1: Editable Install (Recommended for Development)
+```bash
+# Clone the repository
+git clone <repository-url>
+cd sample-analyze-bedrock-usage-and-quotas
+
+# Install in editable mode
+pip install -e .
+```
+
+#### Option 2: Using the bin scripts (Auto-setup)
+```bash
+# Clone the repository
+git clone <repository-url>
+cd sample-analyze-bedrock-usage-and-quotas
+
+# The bin scripts will automatically create venv and install
+./bin/analyze-bedrock-usage
+```
+
 ### Step 1: Clone and Set Up Environment
 
 ```bash
@@ -197,13 +221,13 @@ Before analyzing usage, you may want to refresh the foundation model lists:
 
 ```bash
 # Refresh regions list
-./scripts/refresh-regions.sh
+./bin/refresh-regions
 
 # Refresh foundation models for all regions
-./scripts/refresh-fm-list.sh
+./bin/refresh-fm-list
 
 # Or refresh for a specific region
-./scripts/refresh-fm-list.sh us-west-2
+./bin/refresh-fm-list us-west-2
 ```
 
 This step is optional because this repository comes with preloaded metadata that contains these information. However, you might want to refresh those metadata since new regions, new foundation models, or new quotas for the FMs might have come since this repository was refreshed.
@@ -212,7 +236,7 @@ This step is optional because this repository comes with preloaded metadata that
 
 ```bash
 # Launch the interactive usage analyzer
-./analyze-bedrock-usage.sh
+./bin/analyze-bedrock-usage
 ```
 
 The script will prompt you to:
@@ -239,6 +263,68 @@ xdg-open results/<model-name>-<timestamp>.html
 # View JSON data
 cat results/<model-name>-<timestamp>.json | jq
 ```
+
+## 🚀 Quick Start
+
+For those who want to get started quickly:
+
+```bash
+# 1. Install
+pip install -e .
+
+# 2. Run analyzer
+./bin/analyze-bedrock-usage
+
+# 3. Or use Python module directly
+python -m bedrock_analyzer.cli.analyze
+```
+
+### Alternative Commands
+
+```bash
+# Refresh metadata
+./bin/refresh-regions
+./bin/refresh-fm-list
+./bin/refresh-fm-list us-west-2  # Specific region
+
+# Or via Python module
+python -m bedrock_analyzer.cli.refresh fm-list
+python -m bedrock_analyzer.cli.refresh fm-list us-west-2
+```
+
+### Verify Installation
+
+```bash
+# Check package is installed
+pip list | grep bedrock
+
+# Check version
+python -c "from bedrock_analyzer import __version__; print(__version__)"
+```
+
+### Project Structure Overview
+
+```
+bin/                    # Executable scripts
+src/bedrock_analyzer/   # Python package
+├── cli/                # CLI commands
+├── core/               # Core business logic
+├── aws/                # AWS service clients
+├── metadata/           # Metadata management
+├── utils/              # Shared utilities
+└── templates/          # HTML templates
+```
+
+**Key Files:**
+- `pyproject.toml` - Package configuration
+- `src/bedrock_analyzer/cli/analyze.py` - Main CLI entry point
+- `src/bedrock_analyzer/core/analyzer.py` - Main orchestrator
+- `bin/analyze-bedrock-usage` - Main executable
+
+**Documentation:**
+- `docs/RESTRUCTURING_COMPLETE.md` - Complete restructuring summary
+- `docs/restructuring-summary.md` - Detailed change log
+- `docs/CLEANUP_SUMMARY.md` - Cleanup report
 
 ## 📖 Understanding the Results
 

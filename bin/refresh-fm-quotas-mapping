@@ -1,0 +1,12 @@
+#!/bin/bash
+# Refresh FM quota mappings
+
+echo "⚠️  This command is not yet fully implemented in the new structure."
+echo ""
+echo "The quota mapping functionality requires additional refactoring."
+echo "For now, you can manually edit the quota mappings in:"
+echo "  metadata/fm-list-{region}.yml"
+echo ""
+echo "Or restore the old implementation from .backup-old-structure/"
+echo ""
+exit 1

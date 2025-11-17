@@ -1,4 +1,5 @@
 #!/bin/bash
+# Refresh AWS regions list
 
 echo "Fetching enabled AWS regions..."
 

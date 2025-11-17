@@ -1,0 +1,11 @@
+#!/bin/bash
+# Refresh quota index
+
+echo "⚠️  This command is not yet fully implemented in the new structure."
+echo ""
+echo "The quota index generation requires additional refactoring."
+echo "For now, you can use the existing quota-index.csv file in metadata/"
+echo ""
+echo "Or restore the old implementation from .backup-old-structure/"
+echo ""
+exit 1

@@ -1,0 +1,30 @@
+#!/bin/bash
+# Refresh foundation model lists
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+SPECIFIC_REGION="$1"
+
+# Create virtual environment if it doesn't exist
+if [ ! -d "$PROJECT_ROOT/.venv" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv "$PROJECT_ROOT/.venv"
+    
+    # Activate and install package
+    source "$PROJECT_ROOT/.venv/bin/activate"
+    echo "Installing bedrock-usage-analyzer..."
+    pip install -e "$PROJECT_ROOT" > /dev/null 2>&1
+else
+    # Activate existing virtual environment
+    source "$PROJECT_ROOT/.venv/bin/activate"
+fi
+
+# Run the Python module
+if [ -n "$SPECIFIC_REGION" ]; then
+    python -m bedrock_analyzer.cli.refresh fm-list "$SPECIFIC_REGION"
+else
+    python -m bedrock_analyzer.cli.refresh fm-list
+fi
+
+# Deactivate virtual environment
+deactivate

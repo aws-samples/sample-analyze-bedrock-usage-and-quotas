@@ -4,3 +4,5 @@ dev/tmp/
 *.DS_Store
 __pycache__/
 .venv/
+.backup-old-structure/
+docs/
