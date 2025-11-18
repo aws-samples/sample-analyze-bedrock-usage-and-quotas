@@ -170,14 +170,13 @@ Example with region restriction:
 
 ## 🛠️ Setup Guide
 
-### Installation
-
-This tool is now packaged as a proper Python package. You can install it in two ways:
+### Step 1: Clone and Set Up Environment
+You can install it in two ways:
 
 #### Option 1: Editable Install (Recommended for Development)
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/aws-samples/sample-analyze-bedrock-usage-and-quotas.git
 cd sample-analyze-bedrock-usage-and-quotas
 
 # Install in editable mode
@@ -192,17 +191,6 @@ cd sample-analyze-bedrock-usage-and-quotas
 
 # The bin scripts will automatically create venv and install
 ./bin/analyze-bedrock-usage
-```
-
-### Step 1: Clone and Set Up Environment
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd analyze-bedrock-usage-and-quotas
-
-# The scripts will automatically create a virtual environment
-# and install dependencies when first run
 ```
 
 ### Step 2: Configure AWS Credentials
@@ -262,68 +250,6 @@ xdg-open results/<model-name>-<timestamp>.html
 # View JSON data
 cat results/<model-name>-<timestamp>.json | jq
 ```
-
-## 🚀 Quick Start
-
-For those who want to get started quickly:
-
-```bash
-# 1. Install
-pip install -e .
-
-# 2. Run analyzer
-./bin/analyze-bedrock-usage
-
-# 3. Or use Python module directly
-python -m bedrock_analyzer.cli.analyze
-```
-
-### Alternative Commands
-
-```bash
-# Refresh metadata
-./bin/refresh-regions
-./bin/refresh-fm-list
-./bin/refresh-fm-list us-west-2  # Specific region
-
-# Or via Python module
-python -m bedrock_analyzer.cli.refresh fm-list
-python -m bedrock_analyzer.cli.refresh fm-list us-west-2
-```
-
-### Verify Installation
-
-```bash
-# Check package is installed
-pip list | grep bedrock
-
-# Check version
-python -c "from bedrock_analyzer import __version__; print(__version__)"
-```
-
-### Project Structure Overview
-
-```
-bin/                    # Executable scripts
-src/bedrock_analyzer/   # Python package
-├── cli/                # CLI commands
-├── core/               # Core business logic
-├── aws/                # AWS service clients
-├── metadata/           # Metadata management
-├── utils/              # Shared utilities
-└── templates/          # HTML templates
-```
-
-**Key Files:**
-- `pyproject.toml` - Package configuration
-- `src/bedrock_analyzer/cli/analyze.py` - Main CLI entry point
-- `src/bedrock_analyzer/core/analyzer.py` - Main orchestrator
-- `bin/analyze-bedrock-usage` - Main executable
-
-**Documentation:**
-- `docs/RESTRUCTURING_COMPLETE.md` - Complete restructuring summary
-- `docs/restructuring-summary.md` - Detailed change log
-- `docs/CLEANUP_SUMMARY.md` - Cleanup report
 
 ## 📖 Understanding the Results
 
@@ -554,57 +480,6 @@ A: CloudWatch queries can take time for large time ranges. To speed up:
 1. Analyze shorter time periods
 2. Use specific models instead of analyzing all models
 3. Check your network connection to AWS
-
-## 🏗️ Project Structure
-
-```
-.
-├── bin/                                   # Executable CLI scripts
-│   ├── analyze-bedrock-usage              # Main analyzer
-│   ├── refresh-regions                    # Refresh regions list
-│   ├── refresh-fm-list                    # Refresh FM lists
-│   ├── refresh-fm-quotas-mapping          # Quota mapping
-│   └── refresh-quota-index                # Quota index generation
-├── src/
-│   └── bedrock_analyzer/                  # Main Python package
-│       ├── __init__.py                    # Package initialization
-│       ├── __version__.py                 # Version info (0.11.0)
-│       ├── cli/                           # CLI command modules
-│       │   ├── analyze.py                 # Main CLI entry point
-│       │   └── refresh.py                 # Refresh commands
-│       ├── core/                          # Core business logic
-│       │   ├── user_inputs.py             # User interaction
-│       │   ├── profile_fetcher.py         # Profile discovery
-│       │   ├── metrics_fetcher.py         # CloudWatch metrics
-│       │   ├── output_generator.py        # Report generation
-│       │   └── analyzer.py                # Main orchestrator
-│       ├── aws/                           # AWS service clients
-│       │   ├── bedrock.py                 # Bedrock operations
-│       │   └── sts.py                     # STS operations
-│       ├── metadata/                      # Metadata management
-│       │   └── fm_list.py                 # FM list operations
-│       ├── utils/                         # Shared utilities
-│       │   ├── yaml_handler.py            # YAML operations
-│       │   └── csv_handler.py             # CSV operations
-│       └── templates/                     # Jinja2 templates
-│           └── report.html                # HTML report template
-├── metadata/
-│   ├── regions.yml                        # Enabled regions list
-│   ├── fm-list-{region}.yml               # Per-region FM lists with quotas
-│   └── quota-index.csv                    # Quota validation index
-├── results/                               # Generated reports (JSON + HTML)
-├── tests/                                 # Unit tests (structure only)
-├── docs/                                  # Documentation
-│   ├── RESTRUCTURING_COMPLETE.md          # Restructuring summary
-│   ├── restructuring-summary.md           # Detailed changelog
-│   └── CLEANUP_SUMMARY.md                 # Cleanup report
-├── pyproject.toml                         # Modern Python packaging
-├── setup.py                               # Backward compatibility
-├── MANIFEST.in                            # Package data rules
-├── requirements.txt                       # Runtime dependencies
-├── requirements-dev.txt                   # Development dependencies
-└── .backup-old-structure/                 # Backup of old files (gitignored)
-```
 
 ## 🔒 Security Considerations
 
