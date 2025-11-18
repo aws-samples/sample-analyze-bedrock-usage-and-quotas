@@ -2,7 +2,7 @@
 
 This CLI tool helps to visualize foundation model (FM) usage in [Amazon Bedrock](https://aws.amazon.com/bedrock/). It aggregates the FM usage across Bedrock application inference profiles and provides visibility on current usage gap towards the service quotas (e.g. tokens-per-minute/TPM and requests-per-minute/RPM)
 
-While [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) already provides metrics for the FMss used in Bedrock, it might not be straightforward to aggregate usage for that FM when used across multiple custom application inference profiles. Also, the quota lookup needs to be done separately via [AWS service quotas](https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html). With this tool, you can specify the region and model to analyze and it will fetch the usage across last 1 hour, 1 day, 7 days, 14 days, and 30 days, each with aggregated data across the application inference profiles. It will generate HTML report containing the statistics table and time series data.
+While [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) already provides metrics for the FMss used in Bedrock, it might not be straightforward to see how each of your custom application inference profiles contribute to a certain FM usage in Bedrock. Also, the quota lookup needs to be done separately via [AWS service quotas](https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html). With this tool, you can specify the region and model to analyze and it will fetch the usage across last 1 hour, 1 day, 7 days, 14 days, and 30 days, each with aggregated data across the application inference profiles. It will generate HTML report containing the statistics table and time series data.
 
 This CLI tool can be used to answer questions like:
 1. What is the TPM, and RPM of a particular FM in Bedrock in certain region, across all of my application inference profiles?
@@ -20,7 +20,7 @@ You can refresh the available regions, the available foundation models, and the 
 **This is sample code provided for educational and demonstration purposes only.** Before using this tool in any environment, you are strongly advised to review all code thoroughly and evaluate it against best practices, security and compliance standards, and other requirements.
 
 
-## 📊 Example Output
+## Example Output
 
 The tool generates HTML report showing token usage over time with quota limits. Please find the example screenshots in the following.
 
@@ -35,7 +35,7 @@ The tool generates HTML report showing token usage over time with quota limits. 
 - **Percentile statistics**: p50, p90, and average values in tables
 - **Multiple metrics**: TPM, RPM, TPD (tokens-per-day), invocations, invocation throttles, input token count, output token count, and invocation latency.
 
-## 📋 Prerequisites
+## Prerequisites
 
 ### Required Software
 - **Python** >= 3.9 with [venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
@@ -47,7 +47,7 @@ The tool generates HTML report showing token usage over time with quota limits. 
 - **IAM Permissions**: See detailed permission requirements below
 
 ### Network Requirements
-- **Internet Access**: For accessing AWS APIs
+- **Endpoint Access**: For accessing APIs from Amazon CloudWatch and Amazon Bedrock, either via the internet or via-VPC access.
 
 ### IAM Permissions
 
@@ -88,9 +88,7 @@ This tool requires different IAM permissions depending on which features you use
 
 #### Option 2: Full Feature Access (Complete)
 
-**Use this if:** You run metadata refresh scripts (`./bin/refresh-*`) or test data generators.
-
-This includes **all permissions from Option 1** plus additional permissions:
+**Use this if:** You run metadata refresh scripts (`./bin/refresh-*`) or test data generators. This includes **all permissions from Option 1** plus additional permissions:
 
 Note: You need to replace some part with your own account ID and the region used.
 
@@ -131,14 +129,6 @@ Note: You need to replace some part with your own account ID and the region used
         "arn:aws:bedrock:your-current-region:your-current-account:inference-profile/*",
         "arn:aws:bedrock:your-current-region:your-current-account:application-inference-profile/*"
       ]
-    },
-    {
-      "Sid": "TestDataGeneration",
-      "Effect": "Allow",
-      "Action": [
-        "bedrock:CreateInferenceProfile"
-      ],
-      "Resource": "arn:aws:bedrock:your-current-region:your-current-account:application-inference-profile/*"
     }
   ]
 }
@@ -153,22 +143,11 @@ Note: You need to replace some part with your own account ID and the region used
 #### Security Best Practices
 
 1. **Principle of Least Privilege**: Use Option 1 if you don't need to refresh metadata
-2. **Resource Restrictions**: The `bedrock:InvokeModel` permission is limited to Claude models only
+2. **Resource Restrictions**: The `bedrock:InvokeModel` permission is limited to Claude models only that is used in quota mapping
 3. **No Write Permissions**: All permissions are read-only except for model invocation
 4. **Region Scoping**: Consider adding `Condition` blocks to restrict to specific regions if needed
 
-Example with region restriction:
-```json
-{
-  "Condition": {
-    "StringEquals": {
-      "aws:RequestedRegion": ["us-east-1", "us-west-2"]
-    }
-  }
-}
-```
-
-## 🛠️ Setup Guide
+## Setup Guide
 
 ### Step 1: Clone and Set Up Environment
 You can install it in two ways:
@@ -186,7 +165,7 @@ pip install -e .
 #### Option 2: Using the bin scripts (Auto-setup)
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/aws-samples/sample-analyze-bedrock-usage-and-quotas.git
 cd sample-analyze-bedrock-usage-and-quotas
 
 # The bin scripts will automatically create venv and install
@@ -251,7 +230,7 @@ xdg-open results/<model-name>-<timestamp>.html
 cat results/<model-name>-<timestamp>.json | jq
 ```
 
-## 📖 Understanding the Results
+## Understanding the Results
 
 ### HTML Report Structure
 
@@ -323,36 +302,31 @@ The HTML report contains several sections:
 }
 ```
 
-## 🔧 Advanced Features
+## Advanced Features
 
 ### Quota Mapping
 
 The tool can automatically map AWS Service Quotas to foundation models:
 
 ```bash
-# Run the quota mapping tool (not yet fully implemented)
-# See .backup-old-structure/ for old implementation
+# Run the quota mapping tool
 ./bin/refresh-fm-quotas-mapping
 ```
-
-**Note:** This feature is not yet fully refactored in the new structure. You can:
-1. Manually edit quota mappings in `metadata/fm-list-{region}.yml`
-2. Restore the old implementation from `.backup-old-structure/`
-
-The old implementation would:
-1. Prompt you to select a Bedrock API region
-2. Prompt you to select a Claude model for intelligent mapping
-3. Process ALL regions automatically
-4. Use the model in Bedrock to identify quota codes (TPM/RPM/TPD) intelligently
-5. Cache L-codes (same across regions) for efficiency
-6. Update `metadata/fm-list-{region}.yml` files with quota mappings
-
 **How it works:**
 - Uses Bedrock foundation model to extract base model family names (e.g., "nova-lite" → "nova")
 - Matches quota names containing model family + endpoint type
 - Recognizes "on-demand", "cross-region", and "global" quota patterns
 - Only makes 2-3 inference calls per model profile (on-demand, cross-region, global)
 - Caches results to avoid redundant API calls
+
+You can then validate the mapped quota. To make the validation easier, you can run the following script to create a .csv file where each row constitutes the model, endpoint, and metric combination. 
+
+```bash
+# Run the quota mapping tool
+./bin/refresh-quota-index
+```
+
+It will be saved in ./metadata/quota-index.csv. You can then validate the mapping for each row, either manually or with your AI assistant.
 
 ### Metadata Management
 
@@ -397,7 +371,7 @@ The analyzer supports various customization options through the interactive prom
 - 14days: Bi-weekly patterns
 - 30days: Monthly trends
 
-## 📚 Available Scripts
+## Available Scripts
 
 ### Core Analysis
 
@@ -422,16 +396,12 @@ The analyzer supports various customization options through the interactive prom
 - Preserves existing quota mappings
 
 **`./bin/refresh-fm-quotas-mapping`**
-- ⚠️ Not yet fully implemented in new structure
 - Intelligently maps service quotas to foundation models
-- See `.backup-old-structure/` for old implementation
 
 **`./bin/refresh-quota-index`**
-- ⚠️ Not yet fully implemented in new structure
 - Generates CSV index of all quota mappings for validation
-- See `.backup-old-structure/` for old implementation
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Analysis Issues
 
@@ -443,8 +413,11 @@ A: This means CloudWatch has no data for the selected model. Verify:
 
 **Q: Quota limits not showing in report**
 A: Quotas are only shown if they've been mapped. You can:
-1. Manually edit quota mappings in `metadata/fm-list-{region}.yml`
-2. Restore and run the old quota mapping tool from `.backup-old-structure/`
+1. Manually edit quota mappings in `metadata/fm-list-{region}.yml`, or
+2. Re-run the `./bin/refresh-fm-quotas-mapping`.
+
+If the quota limits are still not shown, it could be that the FM is not yet listed. You can run `./bin/refresh-fm-list` before `./bin/refresh-fm-quotas-mapping`.
+
 
 **Q: "Model not found" error**
 A: Refresh your foundation model lists:
@@ -481,7 +454,7 @@ A: CloudWatch queries can take time for large time ranges. To speed up:
 2. Use specific models instead of analyzing all models
 3. Check your network connection to AWS
 
-## 🔒 Security Considerations
+## Security Considerations
 
 - **Credentials**: Never commit AWS credentials to the repository
 - **Quota Data**: Quota information is fetched from AWS and not hardcoded
