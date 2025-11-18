@@ -170,6 +170,9 @@ cd sample-analyze-bedrock-usage-and-quotas
 
 # The bin scripts will automatically create venv and install
 ./bin/analyze-bedrock-usage
+
+# Windows (without bash): Run Python module directly
+python -m bedrock_analyzer.cli.analyze
 ```
 
 ### Step 2: Configure AWS Credentials
@@ -188,12 +191,15 @@ Before analyzing usage, you may want to refresh the foundation model lists:
 ```bash
 # Refresh regions list
 ./bin/refresh-regions
+# Windows: python -m bedrock_analyzer.cli.refresh regions
 
 # Refresh foundation models for all regions
 ./bin/refresh-fm-list
+# Windows: python -m bedrock_analyzer.cli.refresh fm-list
 
 # Or refresh for a specific region
 ./bin/refresh-fm-list us-west-2
+# Windows: python -m bedrock_analyzer.cli.refresh fm-list us-west-2
 ```
 
 This step is optional because this repository comes with preloaded metadata that contains these information. However, you might want to refresh those metadata since new regions, new foundation models, or new quotas for the FMs might have come since this repository was refreshed.
@@ -203,6 +209,7 @@ This step is optional because this repository comes with preloaded metadata that
 ```bash
 # Launch the interactive usage analyzer
 ./bin/analyze-bedrock-usage
+# Windows: python -m bedrock_analyzer.cli.analyze
 ```
 
 The script will prompt you to:
@@ -311,6 +318,7 @@ The tool can automatically map AWS Service Quotas to foundation models:
 ```bash
 # Run the quota mapping tool
 ./bin/refresh-fm-quotas-mapping
+# Windows: python -m bedrock_analyzer.cli.refresh fm-quotas
 ```
 **How it works:**
 - Uses Bedrock foundation model to extract base model family names (e.g., "nova-lite" → "nova")
@@ -324,6 +332,7 @@ You can then validate the mapped quota. To make the validation easier, you can r
 ```bash
 # Run the quota mapping tool
 ./bin/refresh-quota-index
+# Windows: python -m bedrock_analyzer.cli.refresh quota-index
 ```
 
 It will be saved in ./metadata/quota-index.csv. You can then validate the mapping for each row, either manually or with your AI assistant.
@@ -423,6 +432,7 @@ If the quota limits are still not shown, it could be that the FM is not yet list
 A: Refresh your foundation model lists:
 ```bash
 ./bin/refresh-fm-list
+# Windows: python -m bedrock_analyzer.cli.refresh fm-list
 ```
 
 ### Quota Mapping Issues
