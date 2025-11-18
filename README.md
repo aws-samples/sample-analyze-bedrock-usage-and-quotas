@@ -55,7 +55,7 @@ This tool requires different IAM permissions depending on which features you use
 
 #### Option 1: Usage Analysis Only (Lightweight)
 
-**Use this if:** You only run `./analyze-bedrock-usage.sh` to analyze token usage.
+**Use this if:** You only run `./bin/analyze-bedrock-usage` to analyze token usage.
 
 ```json
 {
@@ -88,7 +88,7 @@ This tool requires different IAM permissions depending on which features you use
 
 #### Option 2: Full Feature Access (Complete)
 
-**Use this if:** You run metadata refresh scripts (`./scripts/refresh-*.sh`) or test data generators.
+**Use this if:** You run metadata refresh scripts (`./bin/refresh-*`) or test data generators.
 
 This includes **all permissions from Option 1** plus additional permissions:
 
@@ -145,11 +145,11 @@ Note: You need to replace some part with your own account ID and the region used
 ```
 
 **Additional permissions explained:**
-- `account:ListRegions` - List enabled AWS regions (for `refresh-regions.sh`)
-- `bedrock:ListFoundationModels` - List all foundation models (for `refresh-fm-list.sh`)
-- `servicequotas:ListServiceQuotas` - List all Bedrock quotas (for `refresh-fm-quotas-mapping.sh` and `refresh-quota-index.sh`)
-- `bedrock:InvokeModel` - Invoke Claude models for intelligent quota mapping (for `refresh-fm-quotas-mapping.sh` only, restricted to Claude models)
-- `bedrock:CreateInferenceProfile` - Create application inference profiles for testing (for `generate-test-data.sh` and `stress-test.sh` only)
+- `account:ListRegions` - List enabled AWS regions (for `bin/refresh-regions`)
+- `bedrock:ListFoundationModels` - List all foundation models (for `bin/refresh-fm-list`)
+- `servicequotas:ListServiceQuotas` - List all Bedrock quotas (for `bin/refresh-fm-quotas-mapping` and `bin/refresh-quota-index`)
+- `bedrock:InvokeModel` - Invoke Claude models for intelligent quota mapping (for `bin/refresh-fm-quotas-mapping` only, restricted to Claude models)
+- `bedrock:CreateInferenceProfile` - Create application inference profiles for testing (for `bin/generate-test-data` and `bin/stress-test` only)
 
 #### Security Best Practices
 
@@ -405,11 +405,16 @@ The HTML report contains several sections:
 The tool can automatically map AWS Service Quotas to foundation models:
 
 ```bash
-# Run the quota mapping tool
-./scripts/refresh-fm-quotas-mapping.sh
+# Run the quota mapping tool (not yet fully implemented)
+# See .backup-old-structure/ for old implementation
+./bin/refresh-fm-quotas-mapping
 ```
 
-This will:
+**Note:** This feature is not yet fully refactored in the new structure. You can:
+1. Manually edit quota mappings in `metadata/fm-list-{region}.yml`
+2. Restore the old implementation from `.backup-old-structure/`
+
+The old implementation would:
 1. Prompt you to select a Bedrock API region
 2. Prompt you to select a Claude model for intelligent mapping
 3. Process ALL regions automatically
@@ -471,7 +476,7 @@ The analyzer supports various customization options through the interactive prom
 
 ### Core Analysis
 
-**`./analyze-bedrock-usage.sh`**
+**`./bin/analyze-bedrock-usage`**
 - Main script for analyzing token usage
 - Interactive prompts for region, provider, model selection
 - Generates JSON and HTML reports in `results/` directory
@@ -479,80 +484,39 @@ The analyzer supports various customization options through the interactive prom
 
 ### Metadata Management
 
-**`./scripts/refresh-regions.sh`**
+**`./bin/refresh-regions`**
 - Fetches enabled AWS regions for your account
 - Saves to `metadata/regions.yml`
 - Run when you enable new regions
 
-**`./scripts/refresh-fm-list.sh [region]`**
+**`./bin/refresh-fm-list [region]`**
 - Fetches foundation models and inference profiles
 - Saves to `metadata/fm-list-{region}.yml`
 - Run without argument to refresh all regions
 - Run with region argument to refresh specific region
 - Preserves existing quota mappings
 
-**`./scripts/refresh-fm-quotas-mapping.sh`**
+**`./bin/refresh-fm-quotas-mapping`**
+- ⚠️ Not yet fully implemented in new structure
 - Intelligently maps service quotas to foundation models
-- Uses Bedrock foundation model for smart matching
-- Processes all regions automatically
-- Caches L-codes for efficiency
-- Updates all `metadata/fm-list-{region}.yml` files
+- See `.backup-old-structure/` for old implementation
 
-**`./scripts/refresh-quota-index.sh`**
+**`./bin/refresh-quota-index`**
+- ⚠️ Not yet fully implemented in new structure
 - Generates CSV index of all quota mappings for validation
-- Reads all `metadata/fm-list-{region}.yml` files
-- Fetches quota details from AWS Service Quotas API
-- Creates `metadata/quota-index.csv` with columns:
-  - model_id, endpoint, quota_type, quota_code, quota_name
-- Use this to eyeball and validate quota mappings
-- Run after `refresh-fm-quotas-mapping.sh` to verify results
+- See `.backup-old-structure/` for old implementation
 
 ### Utility Scripts
 
-**`./utils/refresh_fm_list.py`**
-- Python utility for fetching foundation models
-- Called by refresh-fm-list.sh
-- Handles API pagination and error handling
-
-**`./utils/refresh_fm_quota_mapping.py`**
-- Python utility for quota mapping
-- Uses Bedrock converse API with tool use
-- Implements L-code caching
-
-**`./utils/refresh_quota_index.py`**
-- Python utility for generating quota validation CSV
-- Reads all fm-list YAML files
-- Fetches quota details from Service Quotas API
-- Outputs CSV for manual validation
-- The generated CSV file is not used in the analyzer script. Rather, it is meant to make manual quota mapping verification easier. Since quota mapping is done intelligently with a large language model, it is good to always verify the mapping, especially for the models you are using.
-
-**`./utils/select_fm_quota_mapping_params.py`**
-- Interactive parameter selection for quota mapping
-- Validates region compatibility with inference profiles
-
-**`./utils/generate_test_data.py`**
+**`./bin/generate-test-data`**
+- ⚠️ Not yet fully implemented in new structure
 - Generates test data by creating application inference profiles
-- Runs Bedrock inferences over 15 minutes
-- Uses config from test_config.yaml
-- Creates unique application profiles for each model
+- See `.backup-old-structure/` for old implementation
 
-**`./utils/generate_test_data_parallel.py`**
+**`./bin/stress-test`**
+- ⚠️ Not yet fully implemented in new structure
 - Parallel stress test for Bedrock inference data generation
-- Uses ThreadPoolExecutor for concurrent inferences
-- Configurable workers, iterations, and duration
-- Reads config from test_config.yaml
-- Tracks success/error rates and request throughput
-
-**`./scripts/generate-test-data.sh`**
-- Shell wrapper for generate_test_data.py
-- Sets up venv and runs test data generator
-
-**`./scripts/stress-test.sh`**
-- Shell wrapper for generate_test_data_parallel.py
-- Runs high-volume concurrent Bedrock inference testing
-- Reads all fm-list YAML files
-- Fetches quota details from Service Quotas API
-- Outputs CSV for manual validation
+- See `.backup-old-structure/` for old implementation
 
 ## 🔍 Troubleshooting
 
@@ -565,16 +529,14 @@ A: This means CloudWatch has no data for the selected model. Verify:
 3. CloudWatch metrics are enabled for Bedrock
 
 **Q: Quota limits not showing in report**
-A: Quotas are only shown if they've been mapped. Run:
-```bash
-./scripts/refresh-fm-quotas-mapping.sh
-```
-Then re-run the analysis.
+A: Quotas are only shown if they've been mapped. You can:
+1. Manually edit quota mappings in `metadata/fm-list-{region}.yml`
+2. Restore and run the old quota mapping tool from `.backup-old-structure/`
 
 **Q: "Model not found" error**
 A: Refresh your foundation model lists:
 ```bash
-./scripts/refresh-fm-list.sh
+./bin/refresh-fm-list
 ```
 
 ### Quota Mapping Issues
@@ -595,7 +557,7 @@ A: This can happen if:
 
 **Q: "AccessDenied" errors**
 A: Verify your IAM permissions. See the [IAM Permissions](#iam-permissions) section for detailed permission requirements. Use:
-- **Option 1** if you only run `./analyze-bedrock-usage.sh`
+- **Option 1** if you only run `./bin/analyze-bedrock-usage`
 - **Option 2** if you also run metadata refresh scripts
 
 ### Performance Issues
@@ -610,29 +572,53 @@ A: CloudWatch queries can take time for large time ranges. To speed up:
 
 ```
 .
-├── analyze-bedrock-usage.sh                   # Main analysis wrapper
-├── analyze_bedrock_usage.py                   # Main analysis script (OOP implementation)
-├── utils/
-│   ├── refresh_fm_list.py             # FM list fetcher
-│   ├── refresh_fm_quota_mapping.py    # Quota mapper
-│   ├── refresh_quota_index.py         # Quota index generator
-│   ├── select_fm_quota_mapping_params.py # Interactive selection
-│   ├── generate_test_data.py          # Test data generator
-│   ├── generate_test_data_parallel.py # Parallel test data generator
-│   └── test_config.yaml               # Test configuration
-├── scripts/
-│   ├── refresh-regions.sh                 # Regions fetcher
-│   ├── refresh-fm-list.sh                 # FM list wrapper
-│   ├── refresh-fm-quotas-mapping.sh       # Quota mapping wrapper
-│   ├── refresh-quota-index.sh             # Quota index wrapper
-│   ├── generate-test-data.sh              # Test data generator wrapper
-│   └── stress-test.sh                     # Parallel stress test wrapper
+├── bin/                                   # Executable CLI scripts
+│   ├── analyze-bedrock-usage              # Main analyzer
+│   ├── refresh-regions                    # Refresh regions list
+│   ├── refresh-fm-list                    # Refresh FM lists
+│   ├── refresh-fm-quotas-mapping          # Quota mapping (placeholder)
+│   ├── refresh-quota-index                # Quota index (placeholder)
+│   ├── generate-test-data                 # Test data (placeholder)
+│   └── stress-test                        # Stress test (placeholder)
+├── src/
+│   └── bedrock_analyzer/                  # Main Python package
+│       ├── __init__.py                    # Package initialization
+│       ├── __version__.py                 # Version info (0.11.0)
+│       ├── cli/                           # CLI command modules
+│       │   ├── analyze.py                 # Main CLI entry point
+│       │   └── refresh.py                 # Refresh commands
+│       ├── core/                          # Core business logic
+│       │   ├── user_inputs.py             # User interaction
+│       │   ├── profile_fetcher.py         # Profile discovery
+│       │   ├── metrics_fetcher.py         # CloudWatch metrics
+│       │   ├── output_generator.py        # Report generation
+│       │   └── analyzer.py                # Main orchestrator
+│       ├── aws/                           # AWS service clients
+│       │   ├── bedrock.py                 # Bedrock operations
+│       │   └── sts.py                     # STS operations
+│       ├── metadata/                      # Metadata management
+│       │   └── fm_list.py                 # FM list operations
+│       ├── utils/                         # Shared utilities
+│       │   ├── yaml_handler.py            # YAML operations
+│       │   └── csv_handler.py             # CSV operations
+│       └── templates/                     # Jinja2 templates
+│           └── report.html                # HTML report template
 ├── metadata/
 │   ├── regions.yml                        # Enabled regions list
 │   ├── fm-list-{region}.yml               # Per-region FM lists with quotas
-│   └── quota-index.csv                    # Quota validation index (generated)
+│   └── quota-index.csv                    # Quota validation index
 ├── results/                               # Generated reports (JSON + HTML)
-└── dev/                                   # Development files and TODOs
+├── tests/                                 # Unit tests (structure only)
+├── docs/                                  # Documentation
+│   ├── RESTRUCTURING_COMPLETE.md          # Restructuring summary
+│   ├── restructuring-summary.md           # Detailed changelog
+│   └── CLEANUP_SUMMARY.md                 # Cleanup report
+├── pyproject.toml                         # Modern Python packaging
+├── setup.py                               # Backward compatibility
+├── MANIFEST.in                            # Package data rules
+├── requirements.txt                       # Runtime dependencies
+├── requirements-dev.txt                   # Development dependencies
+└── .backup-old-structure/                 # Backup of old files (gitignored)
 ```
 
 ## 🔒 Security Considerations

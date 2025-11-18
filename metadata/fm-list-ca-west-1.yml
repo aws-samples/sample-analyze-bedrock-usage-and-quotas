@@ -1,1 +1,27 @@
-models: []
+models:
+- endpoints:
+    ca:
+      quotas:
+        concurrent: null
+        rpm: L-89F8391A
+        tpd: null
+        tpm: L-7C42E72A
+  inference_profiles:
+  - ca
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: amazon.nova-lite-v1:0
+  provider: Amazon
+- endpoints:
+    global:
+      quotas:
+        concurrent: null
+        rpm: L-DB84CE56
+        tpd: L-BC182137
+        tpm: L-27C57EE8
+  inference_profiles:
+  - global
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
+  provider: Anthropic

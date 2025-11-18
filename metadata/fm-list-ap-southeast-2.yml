@@ -1,340 +1,326 @@
 models:
-- model_id: amazon.nova-lite-v1:0
-  provider: Amazon
-  inference_types:
-  - INFERENCE_PROFILE
-  - ON_DEMAND
-  inference_profiles:
-  - apac
-  endpoints:
-    base:
-      quotas:
-        tpm: L-70423BF8
-        rpm: L-E386A278
-        tpd: null
-        concurrent: null
+- endpoints:
     apac:
       quotas:
-        tpm: L-7C42E72A
+        concurrent: null
         rpm: L-89F8391A
         tpd: null
+        tpm: L-7C42E72A
+    base:
+      quotas:
         concurrent: null
-- model_id: amazon.nova-micro-v1:0
-  provider: Amazon
+        rpm: L-E386A278
+        tpd: null
+        tpm: L-70423BF8
+  inference_profiles:
+  - apac
   inference_types:
   - INFERENCE_PROFILE
   - ON_DEMAND
-  inference_profiles:
-  - apac
-  endpoints:
-    base:
-      quotas:
-        tpm: L-CFA4FA0D
-        rpm: L-E118F160
-        tpd: null
-        concurrent: null
+  model_id: amazon.nova-lite-v1:0
+  provider: Amazon
+- endpoints:
     apac:
       quotas:
-        tpm: L-DC7FF66C
+        concurrent: null
         rpm: L-3F110E0F
         tpd: null
+        tpm: L-DC7FF66C
+    base:
+      quotas:
         concurrent: null
-- model_id: amazon.nova-pro-v1:0
-  provider: Amazon
+        rpm: L-E118F160
+        tpd: null
+        tpm: L-CFA4FA0D
+  inference_profiles:
+  - apac
   inference_types:
   - INFERENCE_PROFILE
   - ON_DEMAND
-  inference_profiles:
-  - apac
-  endpoints:
-    base:
-      quotas:
-        tpm: L-CE33604C
-        rpm: L-F2717A44
-        tpd: null
-        concurrent: null
+  model_id: amazon.nova-micro-v1:0
+  provider: Amazon
+- endpoints:
     apac:
       quotas:
-        tpm: L-C0326783
+        concurrent: null
         rpm: L-ED46B8C5
         tpd: null
-        concurrent: null
-- model_id: amazon.titan-embed-image-v1
-  provider: Amazon
-  inference_types:
-  - ON_DEMAND
-  endpoints:
+        tpm: L-C0326783
     base:
       quotas:
-        tpm: L-ABC24664
-        rpm: L-DF0E34D4
+        concurrent: null
+        rpm: L-F2717A44
         tpd: null
-        concurrent: null
-- model_id: amazon.titan-embed-image-v1:0
-  provider: Amazon
+        tpm: L-CE33604C
+  inference_profiles:
+  - apac
   inference_types:
-  - PROVISIONED
-- model_id: amazon.titan-embed-text-v2:0
-  provider: Amazon
-  inference_types:
+  - INFERENCE_PROFILE
   - ON_DEMAND
-  endpoints:
+  model_id: amazon.nova-pro-v1:0
+  provider: Amazon
+- endpoints:
     base:
       quotas:
-        tpm: L-DE641971
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_types:
+  - ON_DEMAND
+  model_id: amazon.titan-embed-image-v1
+  provider: Amazon
+- inference_types:
+  - PROVISIONED
+  model_id: amazon.titan-embed-image-v1:0
+  provider: Amazon
+- endpoints:
+    base:
+      quotas:
+        concurrent: null
         rpm: L-26C560CE
         tpd: null
-        concurrent: null
-- model_id: amazon.titan-text-express-v1
-  provider: Amazon
+        tpm: L-DE641971
   inference_types:
   - ON_DEMAND
-  endpoints:
+  model_id: amazon.titan-embed-text-v2:0
+  provider: Amazon
+- endpoints:
     base:
       quotas:
-        tpm: L-44992E63
+        concurrent: null
         rpm: L-9EAB0D12
         tpd: null
-        concurrent: null
-- model_id: amazon.titan-text-express-v1:0:8k
-  provider: Amazon
-  inference_types:
-  - PROVISIONED
-- model_id: amazon.titan-text-lite-v1
-  provider: Amazon
+        tpm: L-44992E63
   inference_types:
   - ON_DEMAND
-  endpoints:
+  model_id: amazon.titan-text-express-v1
+  provider: Amazon
+- inference_types:
+  - PROVISIONED
+  model_id: amazon.titan-text-express-v1:0:8k
+  provider: Amazon
+- endpoints:
     base:
       quotas:
-        tpm: L-70BE83E9
+        concurrent: null
         rpm: L-A70F1DE3
         tpd: null
-        concurrent: null
-- model_id: amazon.titan-text-lite-v1:0:4k
+        tpm: L-70BE83E9
+  inference_types:
+  - ON_DEMAND
+  model_id: amazon.titan-text-lite-v1
   provider: Amazon
-  inference_types:
+- inference_types:
   - PROVISIONED
-- model_id: anthropic.claude-3-5-sonnet-20240620-v1:0
-  provider: Anthropic
-  inference_types:
-  - INFERENCE_PROFILE
-  inference_profiles:
-  - apac
-  endpoints:
+  model_id: amazon.titan-text-lite-v1:0:4k
+  provider: Amazon
+- endpoints:
     apac:
       quotas:
-        tpm: L-479B647F
+        concurrent: null
         rpm: L-F457545D
         tpd: null
-        concurrent: null
-- model_id: anthropic.claude-3-5-sonnet-20241022-v2:0
-  provider: Anthropic
-  inference_types:
-  - ON_DEMAND
-  - INFERENCE_PROFILE
+        tpm: L-479B647F
   inference_profiles:
   - apac
-  endpoints:
-    base:
-      quotas:
-        tpm: L-AD41C330
-        rpm: L-79E773B3
-        tpd: null
-        concurrent: null
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-3-5-sonnet-20240620-v1:0
+  provider: Anthropic
+- endpoints:
     apac:
       quotas:
-        tpm: L-FF8B4E28
+        concurrent: null
         rpm: L-1D3E59A3
         tpd: null
+        tpm: L-FF8B4E28
+    base:
+      quotas:
         concurrent: null
-- model_id: anthropic.claude-3-7-sonnet-20250219-v1:0
-  provider: Anthropic
-  inference_types:
-  - INFERENCE_PROFILE
+        rpm: L-79E773B3
+        tpd: null
+        tpm: L-AD41C330
   inference_profiles:
   - apac
-  endpoints:
+  inference_types:
+  - ON_DEMAND
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-3-5-sonnet-20241022-v2:0
+  provider: Anthropic
+- endpoints:
     apac:
       quotas:
-        tpm: L-6E888CC2
+        concurrent: null
         rpm: L-3D8CC480
         tpd: L-9EB71894
-        concurrent: null
-- model_id: anthropic.claude-3-haiku-20240307-v1:0
-  provider: Anthropic
-  inference_types:
-  - ON_DEMAND
-  - INFERENCE_PROFILE
+        tpm: L-6E888CC2
   inference_profiles:
   - apac
-  endpoints:
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-3-7-sonnet-20250219-v1:0
+  provider: Anthropic
+- endpoints:
     base:
       quotas:
-        tpm: L-8CE99163
+        concurrent: null
         rpm: L-2DC80978
         tpd: null
-        concurrent: null
-    apac:
-      quotas:
-        tpm: L-DCADBC78
-        rpm: L-616A3F5B
-        tpd: null
-        concurrent: null
-- model_id: anthropic.claude-3-haiku-20240307-v1:0:200k
-  provider: Anthropic
-  inference_types:
-  - PROVISIONED
-- model_id: anthropic.claude-3-haiku-20240307-v1:0:48k
-  provider: Anthropic
-  inference_types:
-  - PROVISIONED
-- model_id: anthropic.claude-3-sonnet-20240229-v1:0
-  provider: Anthropic
-  inference_types:
-  - ON_DEMAND
-  - INFERENCE_PROFILE
+        tpm: L-8CE99163
   inference_profiles:
   - apac
-  endpoints:
+  inference_types:
+  - ON_DEMAND
+  model_id: anthropic.claude-3-haiku-20240307-v1:0
+  provider: Anthropic
+- inference_types:
+  - PROVISIONED
+  model_id: anthropic.claude-3-haiku-20240307-v1:0:200k
+  provider: Anthropic
+- inference_types:
+  - PROVISIONED
+  model_id: anthropic.claude-3-haiku-20240307-v1:0:48k
+  provider: Anthropic
+- endpoints:
     base:
       quotas:
-        tpm: L-4C35BB2A
+        concurrent: null
         rpm: L-F406804E
         tpd: null
-        concurrent: null
-    apac:
-      quotas:
-        tpm: L-5DF13F64
-        rpm: L-46591118
-        tpd: null
-        concurrent: null
-- model_id: anthropic.claude-3-sonnet-20240229-v1:0:200k
-  provider: Anthropic
-  inference_types:
-  - PROVISIONED
-- model_id: anthropic.claude-3-sonnet-20240229-v1:0:28k
-  provider: Anthropic
-  inference_types:
-  - PROVISIONED
-- model_id: anthropic.claude-haiku-4-5-20251001-v1:0
-  provider: Anthropic
-  inference_types:
-  - INFERENCE_PROFILE
-  inference_profiles:
-  - au
-  - global
-  endpoints:
-    au:
-      quotas:
-        tpm: L-58BE175A
-        rpm: L-CCA5DF70
-        tpd: L-6120CF2D
-        concurrent: null
-    global:
-      quotas:
-        tpm: L-9A11C666
-        rpm: L-E5084BBA
-        tpd: L-B5C049AE
-        concurrent: null
-- model_id: anthropic.claude-sonnet-4-20250514-v1:0
-  provider: Anthropic
-  inference_types:
-  - INFERENCE_PROFILE
+        tpm: L-4C35BB2A
   inference_profiles:
   - apac
-  endpoints:
-    apac:
-      quotas:
-        tpm: L-59759B4A
-        rpm: L-559DCC33
-        tpd: L-22F701C5
-        concurrent: null
-- model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
-  provider: Anthropic
   inference_types:
-  - INFERENCE_PROFILE
+  - ON_DEMAND
+  model_id: anthropic.claude-3-sonnet-20240229-v1:0
+  provider: Anthropic
+- inference_types:
+  - PROVISIONED
+  model_id: anthropic.claude-3-sonnet-20240229-v1:0:200k
+  provider: Anthropic
+- inference_types:
+  - PROVISIONED
+  model_id: anthropic.claude-3-sonnet-20240229-v1:0:28k
+  provider: Anthropic
+- endpoints:
+    au:
+      quotas:
+        concurrent: null
+        rpm: L-CCA5DF70
+        tpd: L-6120CF2D
+        tpm: L-58BE175A
+    global:
+      quotas:
+        concurrent: null
+        rpm: L-E5084BBA
+        tpd: L-B5C049AE
+        tpm: L-9A11C666
   inference_profiles:
   - au
   - global
-  endpoints:
-    au:
-      quotas:
-        tpm: L-8EA73537
-        rpm: L-A052927A
-        tpd: L-E107194C
-        concurrent: null
-    global:
-      quotas:
-        tpm: L-27C57EE8
-        rpm: L-DB84CE56
-        tpd: L-BC182137
-        concurrent: null
-- model_id: cohere.embed-english-v3
-  provider: Cohere
-  inference_types:
-  - ON_DEMAND
-  endpoints:
-    base:
-      quotas:
-        tpm: L-A2BE277A
-        rpm: L-FF8E7864
-        tpd: null
-        concurrent: null
-- model_id: cohere.embed-multilingual-v3
-  provider: Cohere
-  inference_types:
-  - ON_DEMAND
-  endpoints:
-    base:
-      quotas:
-        tpm: L-C2F86908
-        rpm: L-9E5BD0C6
-        tpd: null
-        concurrent: null
-- model_id: cohere.embed-v4:0
-  provider: Cohere
   inference_types:
   - INFERENCE_PROFILE
+  model_id: anthropic.claude-haiku-4-5-20251001-v1:0
+  provider: Anthropic
+- endpoints:
+    apac:
+      quotas:
+        concurrent: null
+        rpm: L-559DCC33
+        tpd: L-22F701C5
+        tpm: L-59759B4A
   inference_profiles:
-  - global
-  endpoints:
+  - apac
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-sonnet-4-20250514-v1:0
+  provider: Anthropic
+- endpoints:
+    au:
+      quotas:
+        concurrent: null
+        rpm: L-4A6BFAB1
+        tpd: L-381AD9EE
+        tpm: L-F4DDD3EB
     global:
       quotas:
-        tpm: L-02DFBB76
+        concurrent: null
+        rpm: L-DB84CE56
+        tpd: L-BC182137
+        tpm: L-27C57EE8
+  inference_profiles:
+  - au
+  - global
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
+  provider: Anthropic
+- endpoints:
+    base:
+      quotas:
+        concurrent: null
+        rpm: L-FF8E7864
+        tpd: null
+        tpm: L-A2BE277A
+  inference_types:
+  - ON_DEMAND
+  model_id: cohere.embed-english-v3
+  provider: Cohere
+- endpoints:
+    base:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_types:
+  - ON_DEMAND
+  model_id: cohere.embed-multilingual-v3
+  provider: Cohere
+- endpoints:
+    global:
+      quotas:
+        concurrent: null
         rpm: L-7089DC7D
         tpd: L-795ADAB0
-        concurrent: null
-- model_id: mistral.mistral-7b-instruct-v0:2
-  provider: Mistral AI
+        tpm: L-02DFBB76
+  inference_profiles:
+  - global
   inference_types:
-  - ON_DEMAND
-  endpoints:
+  - INFERENCE_PROFILE
+  model_id: cohere.embed-v4:0
+  provider: Cohere
+- endpoints:
     base:
       quotas:
-        tpm: L-02D831F1
+        concurrent: null
         rpm: L-D9A35062
         tpd: null
-        concurrent: null
-- model_id: mistral.mistral-large-2402-v1:0
-  provider: Mistral AI
+        tpm: L-02D831F1
   inference_types:
   - ON_DEMAND
-  endpoints:
+  model_id: mistral.mistral-7b-instruct-v0:2
+  provider: Mistral AI
+- endpoints:
     base:
       quotas:
-        tpm: L-01447289
+        concurrent: null
         rpm: L-3AF844DB
         tpd: null
-        concurrent: null
-- model_id: mistral.mixtral-8x7b-instruct-v0:1
-  provider: Mistral AI
+        tpm: L-01447289
   inference_types:
   - ON_DEMAND
-  endpoints:
+  model_id: mistral.mistral-large-2402-v1:0
+  provider: Mistral AI
+- endpoints:
     base:
       quotas:
-        tpm: L-490F4D1F
+        concurrent: null
         rpm: L-FD938632
         tpd: null
-        concurrent: null
+        tpm: L-490F4D1F
+  inference_types:
+  - ON_DEMAND
+  model_id: mistral.mixtral-8x7b-instruct-v0:1
+  provider: Mistral AI

@@ -6,3 +6,11 @@ __pycache__/
 .venv/
 .backup-old-structure/
 docs/
+
+# Python build artifacts
+*.egg-info/
+*.egg
+dist/
+build/
+*.pyc
+*.pyo

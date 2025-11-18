@@ -1,12 +1,12 @@
 """CloudWatch metrics fetching for Bedrock usage analysis"""
 
+import os
 import boto3
 import numpy as np
 from datetime import datetime, timedelta, timezone
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
-from multiprocessing import cpu_count
 
 logger = logging.getLogger(__name__)
 

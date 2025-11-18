@@ -1,201 +1,201 @@
 models:
-- model_id: amazon.nova-lite-v1:0
-  provider: Amazon
-  inference_types:
-  - INFERENCE_PROFILE
-  - ON_DEMAND
-  inference_profiles:
-  - apac
-  endpoints:
-    base:
-      quotas:
-        tpm: L-70423BF8
-        rpm: L-E386A278
-        tpd: null
-        concurrent: null
+- endpoints:
     apac:
       quotas:
-        tpm: L-7C42E72A
+        concurrent: null
         rpm: L-89F8391A
         tpd: null
+        tpm: L-7C42E72A
+    base:
+      quotas:
         concurrent: null
-- model_id: amazon.nova-lite-v1:0:24k
-  provider: Amazon
-  inference_types: []
-- model_id: amazon.nova-lite-v1:0:300k
-  provider: Amazon
-  inference_types: []
-- model_id: amazon.nova-micro-v1:0
-  provider: Amazon
-  inference_types:
-  - INFERENCE_PROFILE
+        rpm: L-E386A278
+        tpd: null
+        tpm: L-70423BF8
   inference_profiles:
   - apac
-  endpoints:
+  inference_types:
+  - INFERENCE_PROFILE
+  - ON_DEMAND
+  model_id: amazon.nova-lite-v1:0
+  provider: Amazon
+- inference_types: []
+  model_id: amazon.nova-lite-v1:0:24k
+  provider: Amazon
+- inference_types: []
+  model_id: amazon.nova-lite-v1:0:300k
+  provider: Amazon
+- endpoints:
     apac:
       quotas:
-        tpm: L-DC7FF66C
+        concurrent: null
         rpm: L-3F110E0F
         tpd: null
-        concurrent: null
-- model_id: amazon.nova-micro-v1:0:128k
-  provider: Amazon
-  inference_types: []
-- model_id: amazon.nova-micro-v1:0:24k
-  provider: Amazon
-  inference_types: []
-- model_id: amazon.nova-pro-v1:0
-  provider: Amazon
-  inference_types:
-  - INFERENCE_PROFILE
-  - ON_DEMAND
+        tpm: L-DC7FF66C
   inference_profiles:
   - apac
-  endpoints:
-    base:
-      quotas:
-        tpm: L-CE33604C
-        rpm: L-F2717A44
-        tpd: null
-        concurrent: null
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: amazon.nova-micro-v1:0
+  provider: Amazon
+- inference_types: []
+  model_id: amazon.nova-micro-v1:0:128k
+  provider: Amazon
+- inference_types: []
+  model_id: amazon.nova-micro-v1:0:24k
+  provider: Amazon
+- endpoints:
     apac:
       quotas:
-        tpm: L-C0326783
+        concurrent: null
         rpm: L-ED46B8C5
         tpd: null
-        concurrent: null
-- model_id: amazon.nova-pro-v1:0:24k
-  provider: Amazon
-  inference_types: []
-- model_id: amazon.nova-pro-v1:0:300k
-  provider: Amazon
-  inference_types: []
-- model_id: anthropic.claude-haiku-4-5-20251001-v1:0
-  provider: Anthropic
-  inference_types:
-  - INFERENCE_PROFILE
-  inference_profiles:
-  - global
-  endpoints:
-    global:
+        tpm: L-C0326783
+    base:
       quotas:
-        tpm: L-9A11C666
-        rpm: L-E5084BBA
-        tpd: L-B5C049AE
         concurrent: null
-- model_id: anthropic.claude-sonnet-4-20250514-v1:0
-  provider: Anthropic
-  inference_types:
-  - INFERENCE_PROFILE
+        rpm: L-F2717A44
+        tpd: null
+        tpm: L-CE33604C
   inference_profiles:
   - apac
-  endpoints:
+  inference_types:
+  - INFERENCE_PROFILE
+  - ON_DEMAND
+  model_id: amazon.nova-pro-v1:0
+  provider: Amazon
+- inference_types: []
+  model_id: amazon.nova-pro-v1:0:24k
+  provider: Amazon
+- inference_types: []
+  model_id: amazon.nova-pro-v1:0:300k
+  provider: Amazon
+- endpoints:
+    global:
+      quotas:
+        concurrent: null
+        rpm: L-E5084BBA
+        tpd: L-B5C049AE
+        tpm: L-9A11C666
+  inference_profiles:
+  - global
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-haiku-4-5-20251001-v1:0
+  provider: Anthropic
+- endpoints:
     apac:
       quotas:
-        tpm: L-59759B4A
+        concurrent: null
         rpm: L-559DCC33
         tpd: L-22F701C5
-        concurrent: null
-- model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
-  provider: Anthropic
+        tpm: L-59759B4A
+  inference_profiles:
+  - apac
   inference_types:
   - INFERENCE_PROFILE
-  inference_profiles:
-  - global
-  endpoints:
+  model_id: anthropic.claude-sonnet-4-20250514-v1:0
+  provider: Anthropic
+- endpoints:
     global:
       quotas:
-        tpm: L-27C57EE8
+        concurrent: null
         rpm: L-DB84CE56
         tpd: L-BC182137
-        concurrent: null
-- model_id: cohere.embed-v4:0
-  provider: Cohere
-  inference_types:
-  - INFERENCE_PROFILE
+        tpm: L-27C57EE8
   inference_profiles:
   - global
-  endpoints:
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
+  provider: Anthropic
+- endpoints:
     global:
       quotas:
-        tpm: L-02DFBB76
+        concurrent: null
         rpm: L-7089DC7D
         tpd: L-795ADAB0
-        concurrent: null
-- model_id: deepseek.v3-v1:0
-  provider: DeepSeek
+        tpm: L-02DFBB76
+  inference_profiles:
+  - global
   inference_types:
-  - ON_DEMAND
-  endpoints:
+  - INFERENCE_PROFILE
+  model_id: cohere.embed-v4:0
+  provider: Cohere
+- endpoints:
     base:
       quotas:
-        tpm: L-30A6895A
+        concurrent: null
         rpm: L-7A5451CB
         tpd: null
-        concurrent: null
-- model_id: openai.gpt-oss-120b-1:0
-  provider: OpenAI
+        tpm: L-30A6895A
   inference_types:
   - ON_DEMAND
-  endpoints:
+  model_id: deepseek.v3-v1:0
+  provider: DeepSeek
+- endpoints:
     base:
       quotas:
-        tpm: L-9DC5F595
-        rpm: L-25B50707
+        concurrent: null
+        rpm: null
         tpd: null
-        concurrent: null
-- model_id: openai.gpt-oss-20b-1:0
+        tpm: null
+  inference_types:
+  - ON_DEMAND
+  model_id: openai.gpt-oss-120b-1:0
   provider: OpenAI
-  inference_types:
-  - ON_DEMAND
-  endpoints:
+- endpoints:
     base:
       quotas:
-        tpm: L-036E14D8
-        rpm: L-AF7F0545
-        tpd: null
         concurrent: null
-- model_id: qwen.qwen3-235b-a22b-2507-v1:0
-  provider: Qwen
+        rpm: null
+        tpd: null
+        tpm: null
   inference_types:
   - ON_DEMAND
-  endpoints:
+  model_id: openai.gpt-oss-20b-1:0
+  provider: OpenAI
+- endpoints:
     base:
       quotas:
-        tpm: L-3875BCCF
+        concurrent: null
         rpm: L-548A1A32
         tpd: null
-        concurrent: null
-- model_id: qwen.qwen3-32b-v1:0
-  provider: Qwen
+        tpm: L-3875BCCF
   inference_types:
   - ON_DEMAND
-  endpoints:
+  model_id: qwen.qwen3-235b-a22b-2507-v1:0
+  provider: Qwen
+- endpoints:
     base:
       quotas:
-        tpm: L-B7C52139
+        concurrent: null
         rpm: L-E880C759
         tpd: null
-        concurrent: null
-- model_id: qwen.qwen3-coder-30b-a3b-v1:0
-  provider: Qwen
+        tpm: L-B7C52139
   inference_types:
   - ON_DEMAND
-  endpoints:
+  model_id: qwen.qwen3-32b-v1:0
+  provider: Qwen
+- endpoints:
     base:
       quotas:
-        tpm: L-92F81E14
+        concurrent: null
         rpm: L-66EE6E0B
         tpd: null
-        concurrent: null
-- model_id: qwen.qwen3-coder-480b-a35b-v1:0
-  provider: Qwen
+        tpm: L-92F81E14
   inference_types:
   - ON_DEMAND
-  endpoints:
+  model_id: qwen.qwen3-coder-30b-a3b-v1:0
+  provider: Qwen
+- endpoints:
     base:
       quotas:
-        tpm: L-4D0E44C8
+        concurrent: null
         rpm: L-CBE7E3CD
         tpd: null
-        concurrent: null
+        tpm: L-4D0E44C8
+  inference_types:
+  - ON_DEMAND
+  model_id: qwen.qwen3-coder-480b-a35b-v1:0
+  provider: Qwen

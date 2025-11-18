@@ -1,144 +1,150 @@
 models:
-- model_id: amazon.nova-lite-v1:0
-  provider: Amazon
-  inference_types:
-  - INFERENCE_PROFILE
-  inference_profiles:
-  - us
-  endpoints:
+- endpoints:
     us:
       quotas:
-        tpm: L-7C42E72A
+        concurrent: null
         rpm: L-89F8391A
         tpd: null
-        concurrent: null
-- model_id: amazon.nova-pro-v1:0
-  provider: Amazon
-  inference_types:
-  - INFERENCE_PROFILE
+        tpm: L-7C42E72A
   inference_profiles:
   - us
-  endpoints:
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: amazon.nova-lite-v1:0
+  provider: Amazon
+- endpoints:
     us:
       quotas:
-        tpm: L-C0326783
+        concurrent: null
         rpm: L-ED46B8C5
         tpd: null
-        concurrent: null
-- model_id: anthropic.claude-haiku-4-5-20251001-v1:0
-  provider: Anthropic
+        tpm: L-C0326783
+  inference_profiles:
+  - us
   inference_types:
   - INFERENCE_PROFILE
-  inference_profiles:
-  - global
-  - us
-  endpoints:
-    us:
-      quotas:
-        tpm: L-58BE175A
-        rpm: L-CCA5DF70
-        tpd: L-6120CF2D
-        concurrent: null
+  model_id: amazon.nova-pro-v1:0
+  provider: Amazon
+- endpoints:
     global:
       quotas:
-        tpm: L-9A11C666
+        concurrent: null
         rpm: L-E5084BBA
         tpd: L-B5C049AE
-        concurrent: null
-- model_id: anthropic.claude-sonnet-4-20250514-v1:0
-  provider: Anthropic
-  inference_types:
-  - INFERENCE_PROFILE
-  inference_profiles:
-  - us
-  endpoints:
+        tpm: L-9A11C666
     us:
       quotas:
-        tpm: L-59759B4A
+        concurrent: null
+        rpm: L-CCA5DF70
+        tpd: L-6120CF2D
+        tpm: L-58BE175A
+  inference_profiles:
+  - global
+  - us
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-haiku-4-5-20251001-v1:0
+  provider: Anthropic
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
         rpm: L-559DCC33
         tpd: L-22F701C5
-        concurrent: null
-- model_id: anthropic.claude-sonnet-4-20250514-v1:0:200k
-  provider: Anthropic
-  inference_types: []
-- model_id: anthropic.claude-sonnet-4-20250514-v1:0:32k
-  provider: Anthropic
-  inference_types: []
-- model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
-  provider: Anthropic
+        tpm: L-59759B4A
+  inference_profiles:
+  - us
   inference_types:
   - INFERENCE_PROFILE
-  inference_profiles:
-  - global
-  - us
-  endpoints:
-    us:
-      quotas:
-        tpm: L-8EA73537
-        rpm: L-A052927A
-        tpd: L-E107194C
-        concurrent: null
+  model_id: anthropic.claude-sonnet-4-20250514-v1:0
+  provider: Anthropic
+- inference_types: []
+  model_id: anthropic.claude-sonnet-4-20250514-v1:0:200k
+  provider: Anthropic
+- inference_types: []
+  model_id: anthropic.claude-sonnet-4-20250514-v1:0:32k
+  provider: Anthropic
+- endpoints:
     global:
       quotas:
-        tpm: L-27C57EE8
+        concurrent: null
         rpm: L-DB84CE56
         tpd: L-BC182137
+        tpm: L-27C57EE8
+    us:
+      quotas:
         concurrent: null
-- model_id: cohere.embed-v4:0
-  provider: Cohere
-  inference_types:
-  - INFERENCE_PROFILE
+        rpm: L-4A6BFAB1
+        tpd: L-381AD9EE
+        tpm: L-F4DDD3EB
   inference_profiles:
   - global
   - us
-  endpoints:
-    us:
-      quotas:
-        tpm: L-4C3F0FE6
-        rpm: L-EB8C1F30
-        tpd: L-F1BB08BB
-        concurrent: null
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
+  provider: Anthropic
+- endpoints:
     global:
       quotas:
-        tpm: L-02DFBB76
+        concurrent: null
         rpm: L-7089DC7D
         tpd: L-795ADAB0
-        concurrent: null
-- model_id: meta.llama4-maverick-17b-instruct-v1:0
-  provider: Meta
-  inference_types:
-  - INFERENCE_PROFILE
-  inference_profiles:
-  - us
-  endpoints:
+        tpm: L-02DFBB76
     us:
       quotas:
-        tpm: L-DE3FBBF4
-        rpm: L-4F18EF2F
-        tpd: null
         concurrent: null
-- model_id: meta.llama4-maverick-17b-instruct-v1:0:128k
-  provider: Meta
-  inference_types: []
-- model_id: meta.llama4-maverick-17b-instruct-v1:0:1m
-  provider: Meta
-  inference_types: []
-- model_id: meta.llama4-scout-17b-instruct-v1:0
-  provider: Meta
+        rpm: L-EB8C1F30
+        tpd: L-795ADAB0
+        tpm: L-4C3F0FE6
+  inference_profiles:
+  - global
+  - us
   inference_types:
   - INFERENCE_PROFILE
-  inference_profiles:
+  model_id: cohere.embed-v4:0
+  provider: Cohere
+- inference_profiles:
   - us
-  endpoints:
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: meta.llama4-maverick-17b-instruct-v1:0
+  provider: Meta
+- inference_types: []
+  model_id: meta.llama4-maverick-17b-instruct-v1:0:128k
+  provider: Meta
+- inference_types: []
+  model_id: meta.llama4-maverick-17b-instruct-v1:0:1m
+  provider: Meta
+- endpoints:
     us:
       quotas:
-        tpm: L-532E6630
+        concurrent: null
         rpm: L-751B753A
         tpd: null
+        tpm: L-532E6630
+  inference_profiles:
+  - us
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: meta.llama4-scout-17b-instruct-v1:0
+  provider: Meta
+- inference_types: []
+  model_id: meta.llama4-scout-17b-instruct-v1:0:10m
+  provider: Meta
+- inference_types: []
+  model_id: meta.llama4-scout-17b-instruct-v1:0:128k
+  provider: Meta
+- endpoints:
+    us:
+      quotas:
         concurrent: null
-- model_id: meta.llama4-scout-17b-instruct-v1:0:10m
-  provider: Meta
-  inference_types: []
-- model_id: meta.llama4-scout-17b-instruct-v1:0:128k
-  provider: Meta
-  inference_types: []
+        rpm: L-6E046197
+        tpd: null
+        tpm: null
+  inference_profiles:
+  - us
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: twelvelabs.pegasus-1-2-v1:0
+  provider: TwelveLabs

@@ -1,8 +1,9 @@
 """Output generation for Bedrock usage analysis reports"""
 
+import os
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from jinja2 import Template
 
 logger = logging.getLogger(__name__)
@@ -109,11 +110,11 @@ class OutputGenerator:
     def _get_html_template(self):
         """Load HTML template from file"""
         import os
-            });
-        }
-    </script>
-</body>
-</html>
-        """
+        template_path = os.path.join(
+            os.path.dirname(__file__), 
+            '..', 'templates', 'report.html'
+        )
+        with open(template_path, 'r', encoding='utf-8') as f:
+            return f.read()
 
 

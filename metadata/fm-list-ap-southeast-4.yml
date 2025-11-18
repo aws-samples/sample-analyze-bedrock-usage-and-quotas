@@ -1,93 +1,93 @@
 models:
-- model_id: amazon.nova-lite-v1:0
-  provider: Amazon
-  inference_types:
-  - INFERENCE_PROFILE
-  inference_profiles:
-  - apac
-  endpoints:
+- endpoints:
     apac:
       quotas:
-        tpm: L-7C42E72A
+        concurrent: null
         rpm: L-89F8391A
         tpd: null
-        concurrent: null
-- model_id: amazon.nova-pro-v1:0
-  provider: Amazon
-  inference_types:
-  - INFERENCE_PROFILE
+        tpm: L-7C42E72A
   inference_profiles:
   - apac
-  endpoints:
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: amazon.nova-lite-v1:0
+  provider: Amazon
+- endpoints:
     apac:
       quotas:
-        tpm: L-C0326783
+        concurrent: null
         rpm: L-ED46B8C5
         tpd: null
-        concurrent: null
-- model_id: anthropic.claude-haiku-4-5-20251001-v1:0
-  provider: Anthropic
-  inference_types:
-  - INFERENCE_PROFILE
-  inference_profiles:
-  - au
-  - global
-  endpoints:
-    au:
-      quotas:
-        tpm: L-58BE175A
-        rpm: L-CCA5DF70
-        tpd: L-6120CF2D
-        concurrent: null
-    global:
-      quotas:
-        tpm: L-9A11C666
-        rpm: L-E5084BBA
-        tpd: L-B5C049AE
-        concurrent: null
-- model_id: anthropic.claude-sonnet-4-20250514-v1:0
-  provider: Anthropic
-  inference_types:
-  - INFERENCE_PROFILE
+        tpm: L-C0326783
   inference_profiles:
   - apac
-  endpoints:
-    apac:
-      quotas:
-        tpm: L-59759B4A
-        rpm: L-559DCC33
-        tpd: L-22F701C5
-        concurrent: null
-- model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
-  provider: Anthropic
   inference_types:
   - INFERENCE_PROFILE
+  model_id: amazon.nova-pro-v1:0
+  provider: Amazon
+- endpoints:
+    au:
+      quotas:
+        concurrent: null
+        rpm: L-CCA5DF70
+        tpd: L-6120CF2D
+        tpm: L-58BE175A
+    global:
+      quotas:
+        concurrent: null
+        rpm: L-E5084BBA
+        tpd: L-B5C049AE
+        tpm: L-9A11C666
   inference_profiles:
   - au
   - global
-  endpoints:
-    au:
-      quotas:
-        tpm: L-8EA73537
-        rpm: L-A052927A
-        tpd: L-E107194C
-        concurrent: null
-    global:
-      quotas:
-        tpm: L-27C57EE8
-        rpm: L-DB84CE56
-        tpd: L-BC182137
-        concurrent: null
-- model_id: cohere.embed-v4:0
-  provider: Cohere
   inference_types:
   - INFERENCE_PROFILE
+  model_id: anthropic.claude-haiku-4-5-20251001-v1:0
+  provider: Anthropic
+- endpoints:
+    apac:
+      quotas:
+        concurrent: null
+        rpm: L-559DCC33
+        tpd: L-22F701C5
+        tpm: L-59759B4A
   inference_profiles:
-  - global
-  endpoints:
+  - apac
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-sonnet-4-20250514-v1:0
+  provider: Anthropic
+- endpoints:
+    au:
+      quotas:
+        concurrent: null
+        rpm: L-4A6BFAB1
+        tpd: L-381AD9EE
+        tpm: L-F4DDD3EB
     global:
       quotas:
-        tpm: L-02DFBB76
+        concurrent: null
+        rpm: L-DB84CE56
+        tpd: L-BC182137
+        tpm: L-27C57EE8
+  inference_profiles:
+  - au
+  - global
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
+  provider: Anthropic
+- endpoints:
+    global:
+      quotas:
+        concurrent: null
         rpm: L-7089DC7D
         tpd: L-795ADAB0
-        concurrent: null
+        tpm: L-02DFBB76
+  inference_profiles:
+  - global
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: cohere.embed-v4:0
+  provider: Cohere

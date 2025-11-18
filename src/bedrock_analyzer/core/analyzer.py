@@ -1,6 +1,7 @@
 """Main orchestrator for Bedrock token usage analysis"""
 
 import boto3
+import numpy as np
 import logging
 import traceback
 import os
