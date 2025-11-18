@@ -149,7 +149,6 @@ Note: You need to replace some part with your own account ID and the region used
 - `bedrock:ListFoundationModels` - List all foundation models (for `bin/refresh-fm-list`)
 - `servicequotas:ListServiceQuotas` - List all Bedrock quotas (for `bin/refresh-fm-quotas-mapping` and `bin/refresh-quota-index`)
 - `bedrock:InvokeModel` - Invoke Claude models for intelligent quota mapping (for `bin/refresh-fm-quotas-mapping` only, restricted to Claude models)
-- `bedrock:CreateInferenceProfile` - Create application inference profiles for testing (for `bin/generate-test-data` and `bin/stress-test` only)
 
 #### Security Best Practices
 
@@ -506,18 +505,6 @@ The analyzer supports various customization options through the interactive prom
 - Generates CSV index of all quota mappings for validation
 - See `.backup-old-structure/` for old implementation
 
-### Utility Scripts
-
-**`./bin/generate-test-data`**
-- ⚠️ Not yet fully implemented in new structure
-- Generates test data by creating application inference profiles
-- See `.backup-old-structure/` for old implementation
-
-**`./bin/stress-test`**
-- ⚠️ Not yet fully implemented in new structure
-- Parallel stress test for Bedrock inference data generation
-- See `.backup-old-structure/` for old implementation
-
 ## 🔍 Troubleshooting
 
 ### Analysis Issues
@@ -576,10 +563,8 @@ A: CloudWatch queries can take time for large time ranges. To speed up:
 │   ├── analyze-bedrock-usage              # Main analyzer
 │   ├── refresh-regions                    # Refresh regions list
 │   ├── refresh-fm-list                    # Refresh FM lists
-│   ├── refresh-fm-quotas-mapping          # Quota mapping (placeholder)
-│   ├── refresh-quota-index                # Quota index (placeholder)
-│   ├── generate-test-data                 # Test data (placeholder)
-│   └── stress-test                        # Stress test (placeholder)
+│   ├── refresh-fm-quotas-mapping          # Quota mapping
+│   └── refresh-quota-index                # Quota index generation
 ├── src/
 │   └── bedrock_analyzer/                  # Main Python package
 │       ├── __init__.py                    # Package initialization
