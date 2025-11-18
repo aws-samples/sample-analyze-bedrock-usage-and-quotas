@@ -101,29 +101,42 @@ class QuotaIndexGenerator:
                 quotas = endpoint_data.get('quotas', {})
                 source_region = endpoint_data.get('_source_region', 'unknown')
                 
-                for quota_type, quota_code in quotas.items():
-                    if quota_code:
-                        key = (model_id, endpoint_type, quota_type, quota_code)
-                        if key not in seen:
-                            seen.add(key)
-                            self.entries.append({
-                                'model_id': model_id,
-                                'endpoint': endpoint_type,
-                                'quota_type': quota_type,
-                                'quota_code': quota_code,
-                                'source_region': source_region
-                            })
+                for quota_type, quota_data in quotas.items():
+                    # Handle new structure: {code: L-xxx, name: "..."} or null
+                    if quota_data and isinstance(quota_data, dict):
+                        quota_code = quota_data.get('code')
+                        quota_name = quota_data.get('name')
+                        
+                        if quota_code:
+                            key = (model_id, endpoint_type, quota_type, quota_code)
+                            if key not in seen:
+                                seen.add(key)
+                                self.entries.append({
+                                    'model_id': model_id,
+                                    'endpoint': endpoint_type,
+                                    'quota_type': quota_type,
+                                    'quota_code': quota_code,
+                                    'quota_name': quota_name,  # Already have the name
+                                    'source_region': source_region
+                                })
         
         print(f"Found {len(self.entries)} unique quota mappings\n", file=sys.stderr)
     
     def _fetch_quota_details(self):
-        """Fetch quota details from AWS"""
+        """Fetch quota details from AWS (skipped if names already present)"""
         if not self.entries:
             return
         
-        print(f"Fetching quota details for {len(self.entries)} entries...\n", file=sys.stderr)
+        # Check if we already have quota names (new format)
+        entries_without_names = [e for e in self.entries if not e.get('quota_name')]
         
-        for entry in self.entries:
+        if not entries_without_names:
+            print(f"All {len(self.entries)} entries already have quota names (new format)\n", file=sys.stderr)
+            return
+        
+        print(f"Fetching quota details for {len(entries_without_names)} entries without names...\n", file=sys.stderr)
+        
+        for entry in entries_without_names:
             quota_code = entry['quota_code']
             region = entry['source_region']
             

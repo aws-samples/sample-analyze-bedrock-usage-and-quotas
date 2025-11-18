@@ -58,16 +58,20 @@
     <div class="quota-section">
         <h4>Quota Limits</h4>
         {% if quotas.tpm %}
-        <p><strong>TPM (Tokens Per Minute):</strong> {{ "{:,.0f}".format(quotas.tpm) }}</p>
+        <p><strong>TPM (Tokens Per Minute):</strong> {{ "{:,.0f}".format(quotas.tpm.value) }}<br>
+        <span style="font-size: 0.85em;"><a href="{{ quotas.tpm.url }}" target="_blank">[{{ quotas.tpm.code }}]</a> {{ quotas.tpm.name }}</span></p>
         {% endif %}
         {% if quotas.rpm %}
-        <p><strong>RPM (Requests Per Minute):</strong> {{ "{:,.0f}".format(quotas.rpm) }}</p>
+        <p><strong>RPM (Requests Per Minute):</strong> {{ "{:,.0f}".format(quotas.rpm.value) }}<br>
+        <span style="font-size: 0.85em;"><a href="{{ quotas.rpm.url }}" target="_blank">[{{ quotas.rpm.code }}]</a> {{ quotas.rpm.name }}</span></p>
         {% endif %}
         {% if quotas.tpd %}
-        <p><strong>TPD (Tokens Per Day):</strong> {{ "{:,.0f}".format(quotas.tpd) }}</p>
+        <p><strong>TPD (Tokens Per Day):</strong> {{ "{:,.0f}".format(quotas.tpd.value) }}<br>
+        <span style="font-size: 0.85em;"><a href="{{ quotas.tpd.url }}" target="_blank">[{{ quotas.tpd.code }}]</a> {{ quotas.tpd.name }}</span></p>
         {% endif %}
         {% if quotas.concurrent %}
-        <p><strong>Concurrent Requests:</strong> {{ "{:,.0f}".format(quotas.concurrent) }}</p>
+        <p><strong>Concurrent Requests:</strong> {{ "{:,.0f}".format(quotas.concurrent.value) }}<br>
+        <span style="font-size: 0.85em;"><a href="{{ quotas.concurrent.url }}" target="_blank">[{{ quotas.concurrent.code }}]</a> {{ quotas.concurrent.name }}</span></p>
         {% endif %}
         <p><strong>IMPORTANT:</strong> These quotas (and those on the charts) were intelligently mapped with large language model. It is always good to crosscheck with <a href="https://console.aws.amazon.com/servicequotas">AWS service quotas</a></p>
     </div>
@@ -747,9 +751,17 @@
             
             // Add quota line if available
             let quotaValue = null;
-            if (metricType === 'TPM' && quotas.tpm) quotaValue = quotas.tpm;
-            else if (metricType === 'RPM' && quotas.rpm) quotaValue = quotas.rpm;
-            else if (metricType === 'TPD' && quotas.tpd) quotaValue = quotas.tpd;
+            let quotaInfo = null;
+            if (metricType === 'TPM' && quotas.tpm) {
+                quotaValue = quotas.tpm.value;
+                quotaInfo = quotas.tpm;
+            } else if (metricType === 'RPM' && quotas.rpm) {
+                quotaValue = quotas.rpm.value;
+                quotaInfo = quotas.rpm;
+            } else if (metricType === 'TPD' && quotas.tpd) {
+                quotaValue = quotas.tpd.value;
+                quotaInfo = quotas.tpd;
+            }
             
             if (quotaValue && chartData.datasets.length > 0) {
                 // Get all timestamps from all datasets to find min/max
@@ -782,6 +794,21 @@
             if (!canvasElement) {
                 console.error(`Canvas element not found: ${canvasId}`);
                 return;
+            }
+            
+            // Add disclaimer above chart if quota exists
+            if (quotaInfo) {
+                const existingDisclaimer = canvasElement.previousElementSibling;
+                if (!existingDisclaimer || !existingDisclaimer.classList.contains('quota-disclaimer')) {
+                    const disclaimer = document.createElement('p');
+                    disclaimer.className = 'quota-disclaimer';
+                    disclaimer.style.fontSize = '0.85em';
+                    disclaimer.style.fontStyle = 'italic';
+                    disclaimer.style.color = '#666';
+                    disclaimer.style.marginBottom = '10px';
+                    disclaimer.innerHTML = `Note: Quota mapping inferred using AI. Verify with <a href="${quotaInfo.url}" target="_blank">[${quotaInfo.code}] ${quotaInfo.name}</a>`;
+                    canvasElement.parentNode.insertBefore(disclaimer, canvasElement);
+                }
             }
             
             // Skip chart creation if there's no data

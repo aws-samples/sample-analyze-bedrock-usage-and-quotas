@@ -39,6 +39,9 @@ class OutputGenerator:
             formatted_timestamp = timestamp
             iso_timestamp = timestamp
         
+        # Generate period names (same as HTML)
+        period_names = self._generate_period_names(data.get('end_time'), data.get('tz_offset', '+00:00'))
+        
         output_data = {
             'model_id': model_id,
             'region': data.get('region', 'N/A'),
@@ -48,7 +51,10 @@ class OutputGenerator:
             'stats': data['stats'],
             'time_series': data['time_series'],
             'quotas': data.get('quotas', {}),
-            'granularity_config': data.get('granularity_config', {})
+            'granularity_config': data.get('granularity_config', {}),
+            'profile_names': data.get('profile_names', {}),
+            'contributions': data.get('contributions', {}),
+            'period_names': period_names
         }
         
         with open(json_file, 'w', encoding='utf-8') as f:

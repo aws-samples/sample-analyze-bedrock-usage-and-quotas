@@ -14,8 +14,14 @@ anthropic.claude-sonnet-4-5-20250929-v1:0,eu,tpm,L-F4DDD3EB,Cross-region model i
 anthropic.claude-sonnet-4-5-20250929-v1:0,au,rpm,L-4A6BFAB1,Cross-region model inference requests per minute for Anthropic Claude Sonnet 4.5 V1
 anthropic.claude-sonnet-4-5-20250929-v1:0,au,tpd,L-381AD9EE,Model invocation max tokens per day for Anthropic Claude Sonnet 4.5 V1 (doubled for cross-region calls)
 anthropic.claude-sonnet-4-5-20250929-v1:0,au,tpm,L-F4DDD3EB,Cross-region model inference tokens per minute for Anthropic Claude Sonnet 4.5 V1
+amazon.nova-lite-v1:0,ca,rpm,L-89F8391A,Cross-region model inference requests per minute for Amazon Nova Lite
+amazon.nova-lite-v1:0,ca,tpm,L-7C42E72A,Cross-region model inference tokens per minute for Amazon Nova Lite
 amazon.nova-lite-v1:0,us,rpm,L-89F8391A,Cross-region model inference requests per minute for Amazon Nova Lite
 amazon.nova-lite-v1:0,us,tpm,L-7C42E72A,Cross-region model inference tokens per minute for Amazon Nova Lite
+amazon.nova-lite-v1:0,apac,rpm,L-89F8391A,Cross-region model inference requests per minute for Amazon Nova Lite
+amazon.nova-lite-v1:0,apac,tpm,L-7C42E72A,Cross-region model inference tokens per minute for Amazon Nova Lite
+amazon.nova-lite-v1:0,base,rpm,L-E386A278,On-demand model inference requests per minute for Amazon Nova Lite
+amazon.nova-lite-v1:0,base,tpm,L-70423BF8,On-demand model inference tokens per minute for Amazon Nova Lite
 amazon.nova-lite-v1:0,eu,rpm,L-89F8391A,Cross-region model inference requests per minute for Amazon Nova Lite
 amazon.nova-lite-v1:0,eu,tpm,L-7C42E72A,Cross-region model inference tokens per minute for Amazon Nova Lite
 amazon.rerank-v1:0,base,rpm,L-AAB0080F,On-demand model inference requests per minute for Amazon Rerank 1.0
@@ -82,6 +88,8 @@ mistral.mixtral-8x7b-instruct-v0:1,base,rpm,L-FD938632,On-demand model inference
 mistral.mixtral-8x7b-instruct-v0:1,base,tpm,L-490F4D1F,On-demand model inference tokens per minute for Mistral AI Mixtral 8X7BB Instruct
 amazon.nova-micro-v1:0,us,rpm,L-3F110E0F,Cross-region model inference requests per minute for Amazon Nova Micro
 amazon.nova-micro-v1:0,us,tpm,L-DC7FF66C,Cross-region model inference tokens per minute for Amazon Nova Micro
+amazon.nova-micro-v1:0,apac,rpm,L-3F110E0F,Cross-region model inference requests per minute for Amazon Nova Micro
+amazon.nova-micro-v1:0,apac,tpm,L-DC7FF66C,Cross-region model inference tokens per minute for Amazon Nova Micro
 amazon.nova-micro-v1:0,base,rpm,L-E118F160,On-demand model inference requests per minute for Amazon Nova Micro
 amazon.nova-micro-v1:0,base,tpm,L-CFA4FA0D,On-demand model inference tokens per minute for Amazon Nova Micro
 amazon.nova-micro-v1:0,eu,rpm,L-3F110E0F,Cross-region model inference requests per minute for Amazon Nova Micro
@@ -91,6 +99,10 @@ amazon.nova-premier-v1:0,us,tpd,L-B1D7F4B9,Model invocation max tokens per day f
 amazon.nova-premier-v1:0,us,tpm,L-AA7FE948,Cross-region model inference tokens per minute for Amazon Nova Premier V1
 amazon.nova-pro-v1:0,us,rpm,L-ED46B8C5,Cross-region model inference requests per minute for Amazon Nova Pro
 amazon.nova-pro-v1:0,us,tpm,L-C0326783,Cross-region model inference tokens per minute for Amazon Nova Pro
+amazon.nova-pro-v1:0,apac,rpm,L-ED46B8C5,Cross-region model inference requests per minute for Amazon Nova Pro
+amazon.nova-pro-v1:0,apac,tpm,L-C0326783,Cross-region model inference tokens per minute for Amazon Nova Pro
+amazon.nova-pro-v1:0,base,rpm,L-F2717A44,On-demand model inference requests per minute for Amazon Nova Pro
+amazon.nova-pro-v1:0,base,tpm,L-CE33604C,On-demand model inference tokens per minute for Amazon Nova Pro
 amazon.nova-pro-v1:0,eu,rpm,L-ED46B8C5,Cross-region model inference requests per minute for Amazon Nova Pro
 amazon.nova-pro-v1:0,eu,tpm,L-C0326783,Cross-region model inference tokens per minute for Amazon Nova Pro
 amazon.titan-embed-g1-text-02,base,rpm,L-879F6850,On-demand model inference requests per minute for Amazon Titan Text Embeddings

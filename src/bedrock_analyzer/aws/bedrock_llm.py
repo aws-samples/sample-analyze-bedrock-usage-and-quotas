@@ -48,10 +48,10 @@ def extract_quota_codes(region: str, model_id: str, fm_model_id: str,
         model_id: Model ID to use for extraction
         fm_model_id: Foundation model ID being mapped
         endpoint_type: Endpoint type (base/us/eu/global/etc)
-        matching_quotas: List of matching quota dicts with 'name' and 'code'
+        matching_quotas: List of matching quota dicts with 'name', 'code', and 'value'
         
     Returns:
-        Dict with tpm/rpm/tpd/concurrent codes or None
+        Dict with tpm/rpm/tpd/concurrent, each containing {code, name} or None
     """
     client = boto3.client('bedrock-runtime', region_name=region)
     
@@ -147,12 +147,24 @@ Use the report_quota_mapping tool to provide the quota codes. If a quota type is
         for block in content:
             if 'toolUse' in block:
                 tool_input = block['toolUse']['input']
-                return {
-                    'tpm': tool_input.get('tpm_quota_code'),
-                    'rpm': tool_input.get('rpm_quota_code'),
-                    'tpd': tool_input.get('tpd_quota_code'),
-                    'concurrent': tool_input.get('concurrent_requests_quota_code')
-                }
+                
+                # Build quota lookup map
+                quota_map = {q['code']: q['name'] for q in matching_quotas}
+                
+                # Return code + name for each quota type
+                result = {}
+                for metric, code_key in [('tpm', 'tpm_quota_code'), ('rpm', 'rpm_quota_code'), 
+                                         ('tpd', 'tpd_quota_code'), ('concurrent', 'concurrent_requests_quota_code')]:
+                    code = tool_input.get(code_key)
+                    if code:
+                        result[metric] = {
+                            'code': code,
+                            'name': quota_map.get(code, 'Unknown')
+                        }
+                    else:
+                        result[metric] = None
+                
+                return result
         
         return None
         

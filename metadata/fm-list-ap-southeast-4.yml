@@ -3,9 +3,13 @@ models:
     apac:
       quotas:
         concurrent: null
-        rpm: L-89F8391A
+        rpm:
+          code: L-89F8391A
+          name: Cross-region model inference requests per minute for Amazon Nova Lite
         tpd: null
-        tpm: L-7C42E72A
+        tpm:
+          code: L-7C42E72A
+          name: Cross-region model inference tokens per minute for Amazon Nova Lite
   inference_profiles:
   - apac
   inference_types:
@@ -16,9 +20,13 @@ models:
     apac:
       quotas:
         concurrent: null
-        rpm: L-ED46B8C5
+        rpm:
+          code: L-ED46B8C5
+          name: Cross-region model inference requests per minute for Amazon Nova Pro
         tpd: null
-        tpm: L-C0326783
+        tpm:
+          code: L-C0326783
+          name: Cross-region model inference tokens per minute for Amazon Nova Pro
   inference_profiles:
   - apac
   inference_types:
@@ -29,15 +37,33 @@ models:
     au:
       quotas:
         concurrent: null
-        rpm: L-CCA5DF70
-        tpd: L-6120CF2D
-        tpm: L-58BE175A
+        rpm:
+          code: L-CCA5DF70
+          name: Cross-region model inference requests per minute for Anthropic Claude
+            Haiku 4.5
+        tpd:
+          code: L-6120CF2D
+          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
+            (doubled for cross-region calls)
+        tpm:
+          code: L-58BE175A
+          name: Cross-region model inference tokens per minute for Anthropic Claude
+            Haiku 4.5
     global:
       quotas:
         concurrent: null
-        rpm: L-E5084BBA
-        tpd: L-B5C049AE
-        tpm: L-9A11C666
+        rpm:
+          code: L-E5084BBA
+          name: Global cross-region model inference requests per minute for Anthropic
+            Claude Haiku 4.5
+        tpd:
+          code: L-B5C049AE
+          name: Global cross-region model inference tokens per day for Anthropic Claude
+            Haiku 4.5
+        tpm:
+          code: L-9A11C666
+          name: Global cross-region model inference tokens per minute for Anthropic
+            Claude Haiku 4.5
   inference_profiles:
   - au
   - global
@@ -49,9 +75,18 @@ models:
     apac:
       quotas:
         concurrent: null
-        rpm: L-559DCC33
-        tpd: L-22F701C5
-        tpm: L-59759B4A
+        rpm:
+          code: L-559DCC33
+          name: Cross-region model inference requests per minute for Anthropic Claude
+            Sonnet 4 V1
+        tpd:
+          code: L-22F701C5
+          name: Model invocation max tokens per day for Anthropic Claude Sonnet 4
+            V1 (doubled for cross-region calls)
+        tpm:
+          code: L-59759B4A
+          name: Cross-region model inference tokens per minute for Anthropic Claude
+            Sonnet 4 V1
   inference_profiles:
   - apac
   inference_types:
@@ -62,15 +97,33 @@ models:
     au:
       quotas:
         concurrent: null
-        rpm: L-4A6BFAB1
-        tpd: L-381AD9EE
-        tpm: L-F4DDD3EB
+        rpm:
+          code: L-4A6BFAB1
+          name: Cross-region model inference requests per minute for Anthropic Claude
+            Sonnet 4.5 V1
+        tpd:
+          code: L-381AD9EE
+          name: Model invocation max tokens per day for Anthropic Claude Sonnet 4.5
+            V1 (doubled for cross-region calls)
+        tpm:
+          code: L-F4DDD3EB
+          name: Cross-region model inference tokens per minute for Anthropic Claude
+            Sonnet 4.5 V1
     global:
       quotas:
         concurrent: null
-        rpm: L-DB84CE56
-        tpd: L-BC182137
-        tpm: L-27C57EE8
+        rpm:
+          code: L-DB84CE56
+          name: Global cross-region model inference requests per minute for Anthropic
+            Claude Sonnet 4.5 V1
+        tpd:
+          code: L-BC182137
+          name: Global cross-region model inference tokens per day for Anthropic Claude
+            Sonnet 4.5 V1
+        tpm:
+          code: L-27C57EE8
+          name: Global cross-region model inference tokens per minute for Anthropic
+            Claude Sonnet 4.5 V1
   inference_profiles:
   - au
   - global
@@ -82,9 +135,18 @@ models:
     global:
       quotas:
         concurrent: null
-        rpm: L-7089DC7D
-        tpd: L-795ADAB0
-        tpm: L-02DFBB76
+        rpm:
+          code: L-7089DC7D
+          name: Global cross-region model inference requests per minute for Cohere
+            Embed V4
+        tpd:
+          code: L-795ADAB0
+          name: Global cross-region model inference tokens per day for Cohere Embed
+            V4
+        tpm:
+          code: L-02DFBB76
+          name: Global cross-region model inference tokens per minute for Cohere Embed
+            V4
   inference_profiles:
   - global
   inference_types:

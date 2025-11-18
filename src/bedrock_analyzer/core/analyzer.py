@@ -79,11 +79,11 @@ class BedrockAnalyzer:
         
         Args:
             model_id: Model ID
-            quota_codes: Dictionary of quota type to L-code mappings
+            quota_codes: Dictionary of quota type to {code, name} or None
             profile_prefix: Endpoint prefix (e.g., 'us', 'eu', 'global') or None for base
         
         Returns:
-            dict: Quota values (tpm, rpm, tpd)
+            dict: Quota metadata (tpm, rpm, tpd) - each containing {value, code, name, url}
         """
         quotas = {'tpm': None, 'rpm': None, 'tpd': None}
         
@@ -91,30 +91,37 @@ class BedrockAnalyzer:
             return quotas
         
         logger.info(f"  Fetching quotas from Service Quotas API...")
-        for quota_type, code in quota_codes.items():
-            if code:
-                try:
-                    response = self.sq_client.get_service_quota(
-                        ServiceCode='bedrock',
-                        QuotaCode=code
-                    )
-                    value = response['Quota']['Value']
-                    
-                    if 'tpm' in quota_type.lower():
-                        quotas['tpm'] = value
-                    elif 'rpm' in quota_type.lower():
-                        quotas['rpm'] = value
-                    elif 'tpd' in quota_type.lower():
-                        quotas['tpd'] = value
+        for quota_type, quota_data in quota_codes.items():
+            # Handle new structure: {code: L-xxx, name: "..."} or null
+            if quota_data and isinstance(quota_data, dict):
+                code = quota_data.get('code')
+                name = quota_data.get('name')
                 
-                except Exception as e:
-                    logger.info(f"  Warning: Could not fetch {quota_type} quota for {model_id}: {e}")
+                if code:
+                    try:
+                        response = self.sq_client.get_service_quota(
+                            ServiceCode='bedrock',
+                            QuotaCode=code
+                        )
+                        value = response['Quota']['Value']
+                        url = f"https://{self.region}.console.aws.amazon.com/servicequotas/home/services/bedrock/quotas/{code}"
+                        
+                        quota_info = {'value': value, 'code': code, 'name': name, 'url': url}
+                        
+                        if 'tpm' in quota_type.lower():
+                            quotas['tpm'] = quota_info
+                        elif 'rpm' in quota_type.lower():
+                            quotas['rpm'] = quota_info
+                        elif 'tpd' in quota_type.lower():
+                            quotas['tpd'] = quota_info
+                    
+                    except Exception as e:
+                        logger.info(f"  Warning: Could not fetch {quota_type} quota for {model_id}: {e}")
         
         # Apply 2x multiplier for TPD on regional cross-region profiles
-        # Regional profiles use on-demand TPD L-codes but have 2x the quota
         regional_profiles = ['us', 'eu', 'ap', 'apac', 'jp', 'au', 'ca']
-        if profile_prefix in regional_profiles and quotas['tpd'] is not None:
-            quotas['tpd'] = quotas['tpd'] * 2
+        if profile_prefix in regional_profiles and quotas['tpd'] and quotas['tpd']['value'] is not None:
+            quotas['tpd']['value'] = quotas['tpd']['value'] * 2
         
         return quotas
     
