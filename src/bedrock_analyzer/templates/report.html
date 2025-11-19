@@ -630,7 +630,15 @@
                 responsive: true,
                 interaction: { mode: 'nearest', intersect: false, axis: 'x' },
                 plugins: { 
-                    tooltip: { mode: 'nearest', intersect: false, axis: 'x' },
+                    tooltip: { 
+                        mode: 'nearest', 
+                        intersect: false, 
+                        axis: 'x',
+                        filter: function(tooltipItem) {
+                            // Exclude quota line from tooltip
+                            return tooltipItem.dataset.label !== 'Quota Limit';
+                        }
+                    },
                     crosshair: { line: { color: '#999', width: 1, dashPattern: [5, 5] }, sync: { enabled: true } }
                 },
                 scales: {
