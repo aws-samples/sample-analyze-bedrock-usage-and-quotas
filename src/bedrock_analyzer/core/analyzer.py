@@ -12,6 +12,7 @@ from bedrock_analyzer.core.user_inputs import UserInputs
 from bedrock_analyzer.core.profile_fetcher import InferenceProfileFetcher
 from bedrock_analyzer.core.metrics_fetcher import CloudWatchMetricsFetcher
 from bedrock_analyzer.core.output_generator import OutputGenerator
+from bedrock_analyzer.aws.bedrock import REGIONAL_PROFILE_PREFIXES
 
 logger = logging.getLogger(__name__)
 
@@ -119,8 +120,7 @@ class BedrockAnalyzer:
                         logger.info(f"  Warning: Could not fetch {quota_type} quota for {model_id}: {e}")
         
         # Apply 2x multiplier for TPD on regional cross-region profiles
-        regional_profiles = ['us', 'eu', 'ap', 'apac', 'jp', 'au', 'ca']
-        if profile_prefix in regional_profiles and quotas['tpd'] and quotas['tpd']['value'] is not None:
+        if profile_prefix in REGIONAL_PROFILE_PREFIXES and quotas['tpd'] and quotas['tpd']['value'] is not None:
             quotas['tpd']['value'] = quotas['tpd']['value'] * 2
         
         return quotas

@@ -1,6 +1,6 @@
 """Foundation model list management"""
 
-import sys
+import logging
 from typing import List, Dict
 
 from bedrock_analyzer.utils.yaml_handler import load_yaml, save_yaml
@@ -9,6 +9,8 @@ from bedrock_analyzer.aws.bedrock import (
     fetch_all_inference_profiles,
     build_profile_map
 )
+
+logger = logging.getLogger(__name__)
 
 
 def load_existing_models(filepath: str) -> Dict[str, Dict]:
@@ -25,7 +27,7 @@ def load_existing_models(filepath: str) -> Dict[str, Dict]:
         if data and 'models' in data:
             return {m['model_id']: m for m in data['models']}
     except (FileNotFoundError, Exception) as e:
-        print(f"Warning: Could not load existing models from {filepath}: {e}", file=sys.stderr)
+        logger.warning(f"Could not load existing models from {filepath}: {e}")
     return {}
 
 
@@ -46,7 +48,7 @@ def refresh_region(region: str):
     Args:
         region: AWS region name
     """
-    print(f"\nProcessing region: {region}", file=sys.stderr)
+    logger.info(f"\nProcessing region: {region}")
     
     output_file = f'metadata/fm-list-{region}.yml'
     
@@ -58,11 +60,12 @@ def refresh_region(region: str):
     # Load existing models to preserve quota mappings
     existing_models = load_existing_models(output_file)
     
-    # Fetch ALL inference profiles once (optimized)
-    print(f"  Fetching inference profiles...", file=sys.stderr)
+    # Fetch ALL inference profiles once
+    logger.info(f"  Fetching inference profiles...")
     all_profiles = fetch_all_inference_profiles(region)
+    # Build mapping from model to inference profiles
     profile_map = build_profile_map(all_profiles)
-    print(f"  Found {len(profile_map)} models with inference profiles", file=sys.stderr)
+    logger.info(f"  Found {len(profile_map)} models with inference profiles")
     
     # Update models with profile information
     updated_models = []
@@ -79,10 +82,10 @@ def refresh_region(region: str):
                 model['endpoints'] = {
                     'base': {
                         'quotas': {
-                            'tpm': None,
+                            'concurrent': None,
                             'rpm': None,
                             'tpd': None,
-                            'concurrent': None
+                            'tpm': None
                         }
                     }
                 }
@@ -90,12 +93,27 @@ def refresh_region(region: str):
         # Add inference profiles if available
         if model_id in profile_map:
             model['inference_profiles'] = profile_map[model_id]
+            
+            # Initialize endpoint structures for each profile prefix
+            if 'endpoints' not in model:
+                model['endpoints'] = {}
+            
+            for prefix in profile_map[model_id]:
+                if prefix not in model['endpoints']:
+                    model['endpoints'][prefix] = {
+                        'quotas': {
+                            'concurrent': None,
+                            'rpm': None,
+                            'tpd': None,
+                            'tpm': None
+                        }
+                    }
         
         updated_models.append(model)
     
     # Save updated models
     save_models(output_file, updated_models)
-    print(f"  ✓ Saved {len(updated_models)} models to {output_file}", file=sys.stderr)
+    logger.info(f"  ✓ Saved {len(updated_models)} models to {output_file}")
 
 
 def refresh_all_regions(regions: List[str]):

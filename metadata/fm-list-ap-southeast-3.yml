@@ -27,10 +27,12 @@ models:
   - ON_DEMAND
   model_id: amazon.nova-lite-v1:0
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.nova-lite-v1:0:24k
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.nova-lite-v1:0:300k
   provider: Amazon
 - endpoints:
@@ -50,10 +52,12 @@ models:
   - INFERENCE_PROFILE
   model_id: amazon.nova-micro-v1:0
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.nova-micro-v1:0:128k
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.nova-micro-v1:0:24k
   provider: Amazon
 - endpoints:
@@ -84,10 +88,12 @@ models:
   - ON_DEMAND
   model_id: amazon.nova-pro-v1:0
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.nova-pro-v1:0:24k
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.nova-pro-v1:0:300k
   provider: Amazon
 - endpoints:
@@ -197,9 +203,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-25B50707
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 120B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-9DC5F595
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 120B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-120b-1:0
@@ -208,9 +218,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-AF7F0545
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 20B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-036E14D8
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 20B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-20b-1:0

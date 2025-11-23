@@ -1,10 +1,13 @@
 """AWS regions management"""
 
 import boto3
-import sys
+import logging
 from typing import List
+import sys
 
 from bedrock_analyzer.utils.yaml_handler import save_yaml
+
+logger = logging.getLogger(__name__)
 
 
 def fetch_enabled_regions() -> List[str]:
@@ -24,24 +27,24 @@ def fetch_enabled_regions() -> List[str]:
         
         return sorted(regions)
     except Exception as e:
-        print(f"Error fetching regions: {e}", file=sys.stderr)
+        logger.error(f"Error fetching regions: {e}")
         sys.exit(1)
 
 
 def refresh_regions():
     """Refresh the regions list and save to metadata/regions.yml"""
-    print("Fetching enabled AWS regions...", file=sys.stderr)
+    logger.info("Fetching enabled AWS regions...")
     
     regions = fetch_enabled_regions()
     
     if not regions:
-        print("No regions found", file=sys.stderr)
+        logger.error("No regions found")
         sys.exit(1)
     
     output_file = 'metadata/regions.yml'
     save_yaml(output_file, {'regions': regions})
     
-    print(f"Saved {len(regions)} enabled regions to {output_file}", file=sys.stderr)
+    logger.info(f"Saved {len(regions)} enabled regions to {output_file}")
 
 
 def main():

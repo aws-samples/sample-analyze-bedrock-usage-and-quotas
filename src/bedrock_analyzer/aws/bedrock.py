@@ -5,6 +5,73 @@ import sys
 from typing import List, Dict, Optional
 
 
+# Quota keyword constants
+QUOTA_KEYWORD_ON_DEMAND = 'on-demand'
+QUOTA_KEYWORD_CROSS_REGION = 'cross-region'
+QUOTA_KEYWORD_GLOBAL = 'global'
+
+# Single source of truth for inference profile prefix mappings
+# Add new prefixes here - all derived constants will update automatically
+FM_PREFIX_MAPPING = [
+    {
+        'prefix': 'base',
+        'quota_keyword': QUOTA_KEYWORD_ON_DEMAND,
+        'description': 'on-demand',
+        'is_regional': False
+    },
+    {
+        'prefix': 'us',
+        'quota_keyword': QUOTA_KEYWORD_CROSS_REGION,
+        'description': 'cross-region inference profile',
+        'is_regional': True
+    },
+    {
+        'prefix': 'eu',
+        'quota_keyword': QUOTA_KEYWORD_CROSS_REGION,
+        'description': 'cross-region inference profile',
+        'is_regional': True
+    },
+    {
+        'prefix': 'jp',
+        'quota_keyword': QUOTA_KEYWORD_CROSS_REGION,
+        'description': 'cross-region inference profile',
+        'is_regional': True
+    },
+    {
+        'prefix': 'au',
+        'quota_keyword': QUOTA_KEYWORD_CROSS_REGION,
+        'description': 'cross-region inference profile',
+        'is_regional': True
+    },
+    {
+        'prefix': 'apac',
+        'quota_keyword': QUOTA_KEYWORD_CROSS_REGION,
+        'description': 'cross-region inference profile',
+        'is_regional': True
+    },
+    {
+        'prefix': 'ca',
+        'quota_keyword': QUOTA_KEYWORD_CROSS_REGION,
+        'description': 'cross-region inference profile',
+        'is_regional': True
+    },
+    {
+        'prefix': 'global',
+        'quota_keyword': QUOTA_KEYWORD_GLOBAL,
+        'description': 'global inference profile',
+        'is_regional': False
+    }
+]
+
+# Derived constants - automatically generated from FM_PREFIX_MAPPING
+ENDPOINT_QUOTA_KEYWORDS = {m['prefix']: m['quota_keyword'] for m in FM_PREFIX_MAPPING}
+ENDPOINT_DESCRIPTIONS = {m['prefix']: m['description'] for m in FM_PREFIX_MAPPING}
+REGIONAL_PROFILE_PREFIXES = [m['prefix'] for m in FM_PREFIX_MAPPING if m['is_regional']]
+DEFAULT_REGION_PREFIX_MAP = {m['prefix']: m['prefix'] for m in FM_PREFIX_MAPPING if m['is_regional']}
+DEFAULT_REGION_PREFIX_MAP['ap'] = 'apac'  # Special case: 'ap' region prefix maps to 'apac' system profile
+
+
+
 def fetch_foundation_models(region: str) -> Optional[List[Dict]]:
     """Fetch foundation models for a region
     
@@ -39,6 +106,8 @@ def fetch_foundation_models(region: str) -> Optional[List[Dict]]:
 
 def fetch_all_inference_profiles(region: str) -> List[Dict]:
     """Fetch ALL inference profiles in region
+    This fetches only system inference profile, not application inference profile
+    The purpose is to list down the available system inference profiles for a given FM.
     
     Args:
         region: AWS region name
@@ -65,6 +134,7 @@ def fetch_all_inference_profiles(region: str) -> List[Dict]:
 
 def build_profile_map(profiles: List[Dict]) -> Dict[str, List[str]]:
     """Build mapping: model_id → [profile_prefixes]
+    Basically given a list of inference profiles (each profile with the FM it is for), it builds a map with FM key first, then list of profiles for each FM.
     
     Args:
         profiles: List of inference profile dictionaries
@@ -77,7 +147,7 @@ def build_profile_map(profiles: List[Dict]) -> Dict[str, List[str]]:
     for profile in profiles:
         profile_id = profile.get('inferenceProfileId', '')
         
-        # Extract prefix (us, eu, jp, au, global)
+        # Extract prefix (us, eu, jp, au, apac, global)
         if '.' not in profile_id:
             continue
         prefix = profile_id.split('.')[0]
@@ -102,26 +172,35 @@ def build_profile_map(profiles: List[Dict]) -> Dict[str, List[str]]:
     return profile_map
 
 
-def get_inference_profile_arn(bedrock_client, model_id: str, profile_prefix: str, region: str) -> Optional[str]:
+def get_inference_profile_arn(bedrock_client, model_id: str, profile_prefix: str) -> Optional[str]:
     """Get the ARN of a system-defined inference profile
     
     Args:
         bedrock_client: Boto3 Bedrock client
         model_id: Model ID
         profile_prefix: Profile prefix (us, eu, etc.)
-        region: AWS region
         
     Returns:
         Profile ARN or None if not found
     """
     try:
-        response = bedrock_client.list_inference_profiles(maxResults=1000)
-        
         target_profile_id = f"{profile_prefix}.{model_id}"
+        next_token = None
         
-        for profile in response.get('inferenceProfileSummaries', []):
-            if profile.get('inferenceProfileId') == target_profile_id:
-                return profile.get('inferenceProfileArn')
+        while True:
+            params = {'maxResults': 1000}
+            if next_token:
+                params['nextToken'] = next_token
+            
+            response = bedrock_client.list_inference_profiles(**params)
+            
+            for profile in response.get('inferenceProfileSummaries', []):
+                if profile.get('inferenceProfileId') == target_profile_id:
+                    return profile.get('inferenceProfileArn')
+            
+            next_token = response.get('nextToken')
+            if not next_token:
+                break
         
         return None
     except Exception as e:
@@ -145,7 +224,7 @@ def create_application_inference_profile(bedrock_client, model_id: str, profile_
     try:
         # Determine source ARN
         if profile_prefix and profile_prefix != 'null':
-            source_arn = get_inference_profile_arn(bedrock_client, model_id, profile_prefix, region)
+            source_arn = get_inference_profile_arn(bedrock_client, model_id, profile_prefix)
             if not source_arn:
                 print(f"Could not find system profile for {profile_prefix}.{model_id}", file=sys.stderr)
                 return None

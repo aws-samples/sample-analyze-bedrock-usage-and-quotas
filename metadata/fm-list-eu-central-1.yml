@@ -74,7 +74,8 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-embed-image-v1
   provider: Amazon
-- inference_types:
+- endpoints: {}
+  inference_types:
   - PROVISIONED
   model_id: amazon.titan-embed-image-v1:0
   provider: Amazon
@@ -95,7 +96,8 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-embed-text-v1
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.titan-embed-text-v1:2:8k
   provider: Amazon
 - endpoints:
@@ -132,7 +134,8 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-text-express-v1
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.titan-text-express-v1:0:8k
   provider: Amazon
 - endpoints:
@@ -152,7 +155,8 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-text-lite-v1
   provider: Amazon
-- inference_types:
+- endpoints: {}
+  inference_types:
   - PROVISIONED
   model_id: amazon.titan-text-lite-v1:0:4k
   provider: Amazon
@@ -378,11 +382,13 @@ models:
   - INFERENCE_PROFILE
   model_id: anthropic.claude-sonnet-4-5-20250929-v1:0
   provider: Anthropic
-- inference_types:
+- endpoints: {}
+  inference_types:
   - PROVISIONED
   model_id: anthropic.claude-v2:1:18k
   provider: Anthropic
-- inference_types:
+- endpoints: {}
+  inference_types:
   - PROVISIONED
   model_id: anthropic.claude-v2:1:200k
   provider: Anthropic
@@ -523,9 +529,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-25B50707
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 120B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-9DC5F595
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 120B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-120b-1:0
@@ -534,9 +544,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-AF7F0545
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 20B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-036E14D8
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 20B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-20b-1:0

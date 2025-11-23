@@ -2,6 +2,10 @@
 
 import logging
 import sys
+import traceback
+
+from bedrock_analyzer.core.user_inputs import UserInputs
+from bedrock_analyzer.core.analyzer import BedrockAnalyzer
 
 # Configure logging
 logging.basicConfig(
@@ -14,9 +18,7 @@ logger = logging.getLogger(__name__)
 def main():
     """Main entry point for bedrock-analyze command"""
     try:
-        from bedrock_analyzer.core.user_inputs import UserInputs
-        from bedrock_analyzer.core.analyzer import BedrockAnalyzer
-        
+  
         user_inputs = UserInputs()
         user_inputs.collect()
         
@@ -30,7 +32,6 @@ def main():
         sys.exit(1)
     except Exception as e:
         logger.error(f"Error: {e}")
-        import traceback
         traceback.print_exc()
         sys.exit(1)
 

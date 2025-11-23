@@ -4,9 +4,14 @@ import boto3
 import sys
 from typing import Optional, Dict, List
 
+from bedrock_analyzer.aws.bedrock import ENDPOINT_DESCRIPTIONS
+
 
 def extract_common_name(region: str, model_id: str, fm_model_id: str) -> Optional[str]:
-    """Extract common model name using LLM
+    """Extract common model name using LLM with tool call
+    This method is used in quotas mapping (mapping FM usage metric e.g. RPM to the correct quota in AWS Service Quotas)
+    This instructs LLM to extract a common name of an FM. For example, 'nova-lite' becomes 'nova'
+    The technique is used to form keyword search to narrow down the list of FMs to be fed into the LLM call for the actual mapping, while avoiding false negatives of being too specific
     
     Args:
         region: AWS region for Bedrock
@@ -16,6 +21,31 @@ def extract_common_name(region: str, model_id: str, fm_model_id: str) -> Optiona
     Returns:
         Common name or None
     """
+    client = boto3.client('bedrock-runtime', region_name=region)
+    
+    # Use tool to enforce JSON format
+    tool_config = {
+        'tools': [{
+            'toolSpec': {
+                'name': 'report_common_name',
+                'description': 'Report the base model family name',
+                'inputSchema': {
+                    'json': {
+                        'type': 'object',
+                        'properties': {
+                            'common_name': {
+                                'type': 'string',
+                                'description': 'The base model family name (e.g., "nova", "claude")'
+                            }
+                        },
+                        'required': ['common_name']
+                    }
+                }
+            }
+        }],
+        'toolChoice': {'tool': {'name': 'report_common_name'}}
+    }
+    
     prompt = f"""Extract the base model family name from this model ID: {fm_model_id}
 
 Examples:
@@ -23,17 +53,24 @@ Examples:
 - "anthropic.claude-3-5-sonnet-20241022-v2:0" → "claude"
 - "us.anthropic.claude-haiku-4-5-20251001-v1:0" → "claude"
 
-Return ONLY the base family name, nothing else."""
+Use the report_common_name tool to provide ONLY the base family name."""
 
     try:
-        client = boto3.client('bedrock-runtime', region_name=region)
         response = client.converse(
             modelId=model_id,
             messages=[{'role': 'user', 'content': [{'text': prompt}]}],
+            toolConfig=tool_config,
             inferenceConfig={'maxTokens': 50, 'temperature': 0}
         )
-        text = response['output']['message']['content'][0]['text'].strip().lower()
-        return text
+        
+        content = response['output']['message']['content']
+        for block in content:
+            if 'toolUse' in block:
+                common_name = block['toolUse']['input'].get('common_name', '').strip().lower()
+                return common_name if common_name else None
+        
+        return None
+        
     except Exception as e:
         print(f"Error extracting common name: {e}", file=sys.stderr)
         return None
@@ -42,6 +79,7 @@ Return ONLY the base family name, nothing else."""
 def extract_quota_codes(region: str, model_id: str, fm_model_id: str, 
                        endpoint_type: str, matching_quotas: List[Dict]) -> Optional[Dict]:
     """Extract quota codes for all matching quotas in one LLM call
+    This method uses LLM's intelligence to map the right quotas in AWS Service Quotas to a specific metric (e.g. RPM) of a given FM.
     
     Args:
         region: AWS region for Bedrock
@@ -91,16 +129,7 @@ def extract_quota_codes(region: str, model_id: str, fm_model_id: str,
     
     quotas_text = "\n".join([f"- {q['name']} (code: {q['code']})" for q in matching_quotas])
     
-    endpoint_desc = {
-        'base': 'on-demand',
-        'us': 'cross-region inference profile',
-        'eu': 'cross-region inference profile',
-        'jp': 'cross-region inference profile',
-        'au': 'cross-region inference profile',
-        'apac': 'cross-region inference profile',
-        'ca': 'cross-region inference profile',
-        'global': 'global inference profile'
-    }.get(endpoint_type, endpoint_type)
+    endpoint_desc = ENDPOINT_DESCRIPTIONS.get(endpoint_type, endpoint_type)
     
     prompt = f"""For the Bedrock model "{fm_model_id}" with {endpoint_desc} endpoint, identify which quota codes correspond to:
 - TPM (Tokens Per Minute)
@@ -111,27 +140,20 @@ def extract_quota_codes(region: str, model_id: str, fm_model_id: str,
 Available quotas:
 {quotas_text}
 
-IMPORTANT: Pay close attention to the EXACT details in the model ID "{fm_model_id}":
+CRITICAL MATCHING RULES for model ID "{fm_model_id}":
 
-1. MODEL VARIANT - Match the specific variant name:
-   - If model ID contains "nova-sonic", select quotas for "Nova Sonic" (NOT Nova Lite, Nova Pro, etc.)
-   - If model ID contains "nova-lite", select quotas for "Nova Lite" (NOT Nova Sonic, Nova Pro, etc.)
-   - If model ID contains "nova-canvas", select quotas for "Nova Canvas" (NOT Nova Lite, Nova Sonic, etc.)
-   - If model ID contains "claude-haiku", select quotas for "Haiku" (NOT Sonnet, Opus, etc.)
+1. EXACT SUBSTRING MATCH - The model variant/generation in the model ID must appear in the quota name:
+   - "claude-3-haiku" → must find "Claude 3 Haiku" in quota (NOT "Haiku 4.5")
+   - "claude-haiku-4-5" → must find "Haiku 4.5" in quota (NOT "Claude 3 Haiku")
+   - "claude-3-5-sonnet" → must find "3.5 Sonnet" in quota (NOT "3 Sonnet" or "3.7 Sonnet")
+   - "nova-lite" → must find "Nova Lite" in quota (NOT "Nova Sonic" or "Nova Pro")
+   - "llama3-2" → must find "Llama 3.2" in quota (NOT "Llama 3.1")
 
-2. VERSION NUMBER - Match the exact version:
-   - If model ID contains "v1:0" or date like "20240620", select V1 quotas (NOT V2)
-   - If model ID contains "v2:0" or date like "20241022", select V2 quotas (NOT V1)
-   - Version in model ID MUST match version in quota name
+2. VERSION SUFFIX - Match v1:0 to V1, v2:0 to V2 in quota names
 
-3. MODEL TYPE - Understand model type indicators:
-   - "tg1" or "tg" = Text Generation models (NOT image models)
-   - "text" = Text models
-   - "image" = Image generation models
-   - "embed" = Embedding models
+3. REJECT PARTIAL MATCHES - If generation/variant numbers don't match exactly, return null for that metric
 
-Match the quota name to the specific model variant, version, and type in the model ID.
-Some models may ONLY have concurrent requests or RPM. In that case DO not infer the TPM, RPM, and TPD unless the model variant, version, and type matches.
+Some models may only have concurrent requests or RPM. Return null if no exact match found.
 
 Use the report_quota_mapping tool to provide the quota codes. If a quota type is not found, use null."""
     

@@ -10,7 +10,8 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-embed-image-v1
   provider: Amazon
-- inference_types:
+- endpoints: {}
+  inference_types:
   - PROVISIONED
   model_id: amazon.titan-embed-image-v1:0
   provider: Amazon
@@ -48,7 +49,8 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-text-express-v1
   provider: Amazon
-- inference_types:
+- endpoints: {}
+  inference_types:
   - PROVISIONED
   model_id: amazon.titan-text-express-v1:0:8k
   provider: Amazon
@@ -69,7 +71,8 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-text-lite-v1
   provider: Amazon
-- inference_types:
+- endpoints: {}
+  inference_types:
   - PROVISIONED
   model_id: amazon.titan-text-lite-v1:0:4k
   provider: Amazon
@@ -166,7 +169,8 @@ models:
   - ON_DEMAND
   model_id: cohere.embed-english-v3
   provider: Cohere
-- inference_types:
+- endpoints: {}
+  inference_types:
   - PROVISIONED
   model_id: cohere.embed-english-v3:0:512
   provider: Cohere
@@ -181,7 +185,8 @@ models:
   - ON_DEMAND
   model_id: cohere.embed-multilingual-v3
   provider: Cohere
-- inference_types:
+- endpoints: {}
+  inference_types:
   - PROVISIONED
   model_id: cohere.embed-multilingual-v3:0:512
   provider: Cohere
@@ -260,9 +265,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-25B50707
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 120B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-9DC5F595
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 120B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-120b-1:0
@@ -271,9 +280,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-AF7F0545
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 20B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-036E14D8
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 20B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-20b-1:0

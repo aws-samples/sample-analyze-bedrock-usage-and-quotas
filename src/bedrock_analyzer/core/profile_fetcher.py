@@ -2,6 +2,8 @@
 
 import logging
 
+from bedrock_analyzer.aws.bedrock import DEFAULT_REGION_PREFIX_MAP
+
 logger = logging.getLogger(__name__)
 
 
@@ -53,7 +55,7 @@ class InferenceProfileFetcher:
             return prefix_map
         except Exception as e:
             logger.info(f"Warning: Could not discover prefix map, using defaults: {e}")
-            return {'us': 'us', 'eu': 'eu', 'ap': 'apac', 'ca': 'ca', 'jp': 'jp', 'au': 'au'}
+            return DEFAULT_REGION_PREFIX_MAP
     
     def find_profiles(self, model_id, profile_prefix):
         """Find system-defined profile and all application profiles based on it

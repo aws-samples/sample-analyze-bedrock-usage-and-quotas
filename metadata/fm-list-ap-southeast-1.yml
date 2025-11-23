@@ -151,10 +151,12 @@ models:
   - INFERENCE_PROFILE
   model_id: anthropic.claude-3-sonnet-20240229-v1:0
   provider: Anthropic
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: anthropic.claude-3-sonnet-20240229-v1:0:200k
   provider: Anthropic
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: anthropic.claude-3-sonnet-20240229-v1:0:28k
   provider: Anthropic
 - endpoints:

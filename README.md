@@ -406,6 +406,18 @@ The analyzer supports various customization options through the interactive prom
 
 **`./bin/refresh-fm-quotas-mapping`**
 - Intelligently maps service quotas to foundation models
+- Arguments: `[target_region] [bedrock_region] [model_id]` - all optional
+- Examples:
+  ```bash
+  # Interactive mode - prompts for all parameters
+  ./bin/refresh-fm-quotas-mapping
+  
+  # Skip region selection - only process us-east-1
+  ./bin/refresh-fm-quotas-mapping us-east-1
+  
+  # Skip all prompts - process us-east-1 using us-west-2 for API calls
+  ./bin/refresh-fm-quotas-mapping us-east-1 us-west-2 us.anthropic.claude-haiku-4-5-20251001-v1:0
+  ```
 
 **`./bin/refresh-quota-index`**
 - Generates CSV index of all quota mappings for validation

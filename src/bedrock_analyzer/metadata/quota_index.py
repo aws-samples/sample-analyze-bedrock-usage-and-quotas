@@ -1,12 +1,15 @@
 """Generate quota index CSV for validation"""
 
 import glob
-import sys
+import logging
 from typing import Dict, List, Set
+import sys
 
 from bedrock_analyzer.utils.yaml_handler import load_yaml, save_yaml
 from bedrock_analyzer.utils.csv_handler import write_csv
 from bedrock_analyzer.aws.servicequotas import get_quota_details
+
+logger = logging.getLogger(__name__)
 
 
 class QuotaIndexGenerator:
@@ -19,7 +22,7 @@ class QuotaIndexGenerator:
     
     def run(self):
         """Execute quota index generation"""
-        print("Generating quota index for validation...\n", file=sys.stderr)
+        logger.info("Generating quota index for validation...\n")
         
         self._load_all_models()
         self._extract_quota_entries()
@@ -27,18 +30,18 @@ class QuotaIndexGenerator:
         self._cleanup_errors()
         self._generate_csv()
         
-        print("\nQuota index generation complete!", file=sys.stderr)
-        print("Review metadata/quota-index.csv to validate quota mappings", file=sys.stderr)
+        logger.info("\nQuota index generation complete!")
+        logger.info("Review metadata/quota-index.csv to validate quota mappings")
     
     def _load_all_models(self):
         """Load all FM list files and merge endpoints from all regions"""
         fm_files = glob.glob('metadata/fm-list-*.yml')
         
         if not fm_files:
-            print("No fm-list files found in metadata/", file=sys.stderr)
+            logger.error("No fm-list files found in metadata/")
             sys.exit(1)
         
-        print(f"Found {len(fm_files)} fm-list files", file=sys.stderr)
+        logger.info(f"Found {len(fm_files)} fm-list files")
         
         for fm_file in fm_files:
             region = fm_file.replace('metadata/fm-list-', '').replace('.yml', '')
@@ -57,10 +60,10 @@ class QuotaIndexGenerator:
                         'endpoints': {}
                     }
                 
-                # Merge endpoints from this region
+                # Merge endpoints from this region, to the dictionary that aggregates all regions
                 self._merge_endpoints(model_id, model, region)
         
-        print(f"Loaded {len(self.models)} unique models\n", file=sys.stderr)
+        logger.info(f"Loaded {len(self.models)} unique models\n")
     
     def _merge_endpoints(self, model_id: str, model: Dict, region: str):
         """Merge endpoints from model into existing model entry"""
@@ -76,7 +79,7 @@ class QuotaIndexGenerator:
                     '_source_region': region
                 }
             else:
-                # Endpoint exists - check if new one has quotas
+                # Endpoint exists, potentially from other regions - check if new one has quotas
                 existing_quotas = existing_endpoints[endpoint_type].get('quotas', {})
                 new_quotas = endpoint_data.get('quotas', {})
                 
@@ -92,6 +95,7 @@ class QuotaIndexGenerator:
     
     def _extract_quota_entries(self):
         """Extract all quota mappings from models"""
+        # Avoid duplicate by listing only a unique combination of model ID, profile prefix, and metric/quota
         seen = set()
         
         for model_id, model in self.models.items():
@@ -102,7 +106,7 @@ class QuotaIndexGenerator:
                 source_region = endpoint_data.get('_source_region', 'unknown')
                 
                 for quota_type, quota_data in quotas.items():
-                    # Handle new structure: {code: L-xxx, name: "..."} or null
+                    # {code: L-xxx, name: "..."} or null
                     if quota_data and isinstance(quota_data, dict):
                         quota_code = quota_data.get('code')
                         quota_name = quota_data.get('name')
@@ -116,11 +120,11 @@ class QuotaIndexGenerator:
                                     'endpoint': endpoint_type,
                                     'quota_type': quota_type,
                                     'quota_code': quota_code,
-                                    'quota_name': quota_name,  # Already have the name
+                                    'quota_name': quota_name,
                                     'source_region': source_region
                                 })
         
-        print(f"Found {len(self.entries)} unique quota mappings\n", file=sys.stderr)
+        logger.info(f"Found {len(self.entries)} unique quota mappings\n")
     
     def _fetch_quota_details(self):
         """Fetch quota details from AWS (skipped if names already present)"""
@@ -131,10 +135,10 @@ class QuotaIndexGenerator:
         entries_without_names = [e for e in self.entries if not e.get('quota_name')]
         
         if not entries_without_names:
-            print(f"All {len(self.entries)} entries already have quota names (new format)\n", file=sys.stderr)
+            logger.info(f"All {len(self.entries)} entries already have quota names (new format)\n")
             return
         
-        print(f"Fetching quota details for {len(entries_without_names)} entries without names...\n", file=sys.stderr)
+        logger.info(f"Fetching quota details for {len(entries_without_names)} entries without names...\n")
         
         for entry in entries_without_names:
             quota_code = entry['quota_code']
@@ -151,9 +155,10 @@ class QuotaIndexGenerator:
     def _cleanup_errors(self):
         """Remove ERROR entries from YAML files"""
         if not self.error_entries:
+            logger.info(f"\nThere is no erroneous entry.")
             return
         
-        print(f"\nCleaning up {len(self.error_entries)} ERROR entries...", file=sys.stderr)
+        logger.info(f"\nCleaning up {len(self.error_entries)} ERROR entries...")
         
         # Group by region
         by_region = {}
@@ -183,13 +188,13 @@ class QuotaIndexGenerator:
                     if 'endpoints' in model and endpoint in model['endpoints']:
                         if 'quotas' in model['endpoints'][endpoint]:
                             if quota_type in model['endpoints'][endpoint]['quotas']:
-                                print(f"  Removing {model_id} -> {endpoint} -> {quota_type}", file=sys.stderr)
+                                logger.info(f"  Removing {model_id} -> {endpoint} -> {quota_type}")
                                 model['endpoints'][endpoint]['quotas'][quota_type] = None
                                 modified = True
         
         if modified:
             save_yaml(yaml_file, data)
-            print(f"  ✓ Updated {yaml_file}", file=sys.stderr)
+            logger.info(f"  ✓ Updated {yaml_file}")
     
     def _generate_csv(self):
         """Generate CSV file with valid entries"""
@@ -204,9 +209,9 @@ class QuotaIndexGenerator:
             valid_rows
         )
         
-        print(f"\n✓ Generated metadata/quota-index.csv with {len(valid_rows)} valid entries", file=sys.stderr)
+        logger.info(f"\n✓ Generated metadata/quota-index.csv with {len(valid_rows)} valid entries")
         if self.error_entries:
-            print(f"✓ Cleaned up {len(self.error_entries)} ERROR entries from YAML files", file=sys.stderr)
+            logger.info(f"✓ Cleaned up {len(self.error_entries)} ERROR entries from YAML files")
 
 
 def main():

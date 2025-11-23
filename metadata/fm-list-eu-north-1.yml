@@ -286,9 +286,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-25B50707
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 120B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-9DC5F595
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 120B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-120b-1:0
@@ -297,9 +301,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-AF7F0545
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 20B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-036E14D8
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 20B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-20b-1:0

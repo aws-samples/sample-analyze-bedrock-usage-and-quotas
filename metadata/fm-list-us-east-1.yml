@@ -403,9 +403,15 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-7DBB06FD
+          name: On-demand model inference requests per minute for Amazon Titan Image
+            Generator G1
         tpd: null
-        tpm: null
+        tpm:
+          code: L-2B715ABD
+          name: On-demand model inference tokens per minute for Amazon Titan Image
+            Generator G1
   inference_types:
   - ON_DEMAND
   model_id: amazon.titan-tg1-large
@@ -415,14 +421,14 @@ models:
       quotas:
         concurrent: null
         rpm:
-          code: L-616A3F5B
-          name: Cross-region model inference requests per minute for Anthropic Claude
-            3 Haiku
-        tpd:
-          code: L-6120CF2D
-          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
-            (doubled for cross-region calls)
-        tpm: null
+          code: L-252DF594
+          name: Cross-Region model inference requests per minute for Anthropic Claude
+            3.5 Haiku
+        tpd: null
+        tpm:
+          code: L-4BF37C17
+          name: Cross-Region model inference tokens per minute for Anthropic Claude
+            3.5 Haiku
   inference_profiles:
   - us
   inference_types:
@@ -515,6 +521,21 @@ models:
           code: L-8CE99163
           name: On-demand model inference tokens per minute for Anthropic Claude 3
             Haiku
+    us:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-616A3F5B
+          name: Cross-region model inference requests per minute for Anthropic Claude
+            3 Haiku
+        tpd:
+          code: L-6120CF2D
+          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
+            (doubled for cross-region calls)
+        tpm:
+          code: L-DCADBC78
+          name: Cross-region model inference tokens per minute for Anthropic Claude
+            3 Haiku
   inference_profiles:
   - us
   inference_types:
@@ -573,6 +594,18 @@ models:
           code: L-4C35BB2A
           name: On-demand model inference tokens per minute for Anthropic Claude 3
             Sonnet
+    us:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-46591118
+          name: Cross-region model inference requests per minute for Anthropic Claude
+            3 Sonnet
+        tpd: null
+        tpm:
+          code: L-5DF13F64
+          name: Cross-region model inference tokens per minute for Anthropic Claude
+            3 Sonnet
   inference_profiles:
   - us
   inference_types:
@@ -611,9 +644,9 @@ models:
           name: Cross-region model inference requests per minute for Anthropic Claude
             Haiku 4.5
         tpd:
-          code: L-6120CF2D
-          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
-            (doubled for cross-region calls)
+          code: L-B5C049AE
+          name: Global cross-region model inference tokens per day for Anthropic Claude
+            Haiku 4.5
         tpm:
           code: L-58BE175A
           name: Cross-region model inference tokens per minute for Anthropic Claude
@@ -1013,7 +1046,20 @@ models:
   - INFERENCE_PROFILE
   model_id: meta.llama3-2-90b-instruct-v1:0
   provider: Meta
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-DEDE703C
+          name: Cross-region model inference requests per minute for Meta Llama 3.3
+            70B Instruct
+        tpd: null
+        tpm:
+          code: L-0E7AA8B7
+          name: Cross-region model inference tokens per minute for Meta Llama 3.3
+            70B Instruct
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
@@ -1051,7 +1097,20 @@ models:
   - ON_DEMAND
   model_id: meta.llama3-8b-instruct-v1:0
   provider: Meta
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-4F18EF2F
+          name: Cross-region model inference requests per minute for Meta Llama 4
+            Maverick V1
+        tpd: null
+        tpm:
+          code: L-DE3FBBF4
+          name: Cross-region model inference tokens per minute for Meta Llama 4 Maverick
+            V1
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
@@ -1165,9 +1224,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-25B50707
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 120B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-9DC5F595
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 120B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-120b-1:0
@@ -1176,9 +1239,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-AF7F0545
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 20B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-036E14D8
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 20B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-20b-1:0
@@ -1247,61 +1314,134 @@ models:
   - INFERENCE_PROFILE
   model_id: stability.stable-creative-upscale-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-D3D76E8D
+          name: Cross-region model inference requests per minute for Stable Image
+            Fast Upscale
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-fast-upscale-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-control-sketch-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-control-structure-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-erase-object-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-inpaint-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-remove-background-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-search-recolor-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-search-replace-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-style-guide-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
@@ -1311,10 +1451,7 @@ models:
     us:
       quotas:
         concurrent: null
-        rpm:
-          code: L-42A5F078
-          name: Cross-region model inference requests per minute for Stable Image
-            Style Transfer
+        rpm: null
         tpd: null
         tpm: null
   inference_profiles:
@@ -1327,9 +1464,7 @@ models:
     us:
       quotas:
         concurrent: null
-        rpm:
-          code: L-E967C2DE
-          name: Cross-region model inference requests per minute for Twelve Labs Marengo
+        rpm: null
         tpd: null
         tpm: null
   inference_profiles:
@@ -1382,3 +1517,29 @@ models:
   - INFERENCE_PROFILE
   model_id: twelvelabs.pegasus-1-2-v1:0
   provider: TwelveLabs
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
+  - us
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: writer.palmyra-x4-v1:0
+  provider: Writer
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
+  - us
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: writer.palmyra-x5-v1:0
+  provider: Writer

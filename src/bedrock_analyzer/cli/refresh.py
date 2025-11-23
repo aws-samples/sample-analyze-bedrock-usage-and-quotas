@@ -2,6 +2,8 @@
 
 import sys
 import logging
+import traceback
+import argparse
 
 from bedrock_analyzer.utils.yaml_handler import load_yaml
 from bedrock_analyzer.metadata.regions import refresh_regions
@@ -21,7 +23,6 @@ def refresh_regions_command():
         logger.info("\n✓ Regions list refreshed")
     except Exception as e:
         logger.error(f"\n✗ Error: {e}")
-        import traceback
         traceback.print_exc()
         sys.exit(1)
 
@@ -56,18 +57,22 @@ def refresh_fm_list_command(region: str = None):
             sys.exit(1)
 
 
-def refresh_quota_mapping_command(bedrock_region: str = None, model_id: str = None, target_region: str = None):
+def refresh_quota_mapping_command(target_region: str = None, bedrock_region: str = None, model_id: str = None):
     """Refresh quota mappings for foundation models
     
     Args:
-        bedrock_region: AWS region for Bedrock API calls (optional)
-        model_id: Model ID to use for mapping (optional)
-        target_region: Specific region to process (optional)
+        target_region: Specific region to process (optional, prompts if not provided)
+        bedrock_region: AWS region for Bedrock API calls (optional, prompts if not provided)
+        model_id: Model ID to use for mapping (optional, prompts if not provided)
     """
     try:
         # Use provided arguments or interactive selection
-        if not bedrock_region or not model_id:
-            bedrock_region, model_id, target_region = select_quota_mapping_params()
+        if not bedrock_region or not model_id or not target_region:
+            bedrock_region, model_id, target_region = select_quota_mapping_params(
+                target_region=target_region,
+                bedrock_region=bedrock_region,
+                model_id=model_id
+            )
         
         # Run quota mapper
         mapper = QuotaMapper(bedrock_region, model_id, target_region)
@@ -80,7 +85,6 @@ def refresh_quota_mapping_command(bedrock_region: str = None, model_id: str = No
         sys.exit(1)
     except Exception as e:
         logger.error(f"\n✗ Error: {e}")
-        import traceback
         traceback.print_exc()
         sys.exit(1)
 
@@ -93,14 +97,13 @@ def refresh_quota_index_command():
         logger.info("\n✓ Quota index generated")
     except Exception as e:
         logger.error(f"\n✗ Error: {e}")
-        import traceback
         traceback.print_exc()
         sys.exit(1)
 
 
 def main():
     """Main entry point for bedrock-refresh command"""
-    import argparse
+
     
     parser = argparse.ArgumentParser(description='Refresh Bedrock metadata')
     subparsers = parser.add_subparsers(dest='command', help='Command to run')
@@ -114,9 +117,9 @@ def main():
     
     # Quota mapping refresh
     quota_parser = subparsers.add_parser('fm-quotas', help='Refresh quota mappings')
-    quota_parser.add_argument('bedrock_region', nargs='?', help='Bedrock API region (e.g., us-west-2)')
-    quota_parser.add_argument('model_id', nargs='?', help='Model ID for mapping (e.g., anthropic.claude-3-5-sonnet-20241022-v2:0)')
     quota_parser.add_argument('target_region', nargs='?', help='Target region to process (optional)')
+    quota_parser.add_argument('bedrock_region', nargs='?', help='Bedrock API region (e.g., us-west-2)')
+    quota_parser.add_argument('model_id', nargs='?', help='Model ID for mapping (e.g., us.anthropic.claude-3-7-sonnet-20250219-v1:0)')
     
     # Quota index generation
     index_parser = subparsers.add_parser('quota-index', help='Generate quota index CSV')
@@ -128,7 +131,7 @@ def main():
     elif args.command == 'fm-list':
         refresh_fm_list_command(args.region)
     elif args.command == 'fm-quotas':
-        refresh_quota_mapping_command(args.bedrock_region, args.model_id, args.target_region)
+        refresh_quota_mapping_command(args.target_region, args.bedrock_region, args.model_id)
     elif args.command == 'quota-index':
         refresh_quota_index_command()
     else:

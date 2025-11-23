@@ -1,12 +1,16 @@
 """Foundation model quota mapping using Bedrock LLM"""
 
-import sys
+import logging
 import copy
+import sys
 from typing import Dict, List, Optional
 
 from bedrock_analyzer.utils.yaml_handler import load_yaml, save_yaml
 from bedrock_analyzer.aws.servicequotas import fetch_service_quotas
 from bedrock_analyzer.aws.bedrock_llm import extract_common_name, extract_quota_codes
+from bedrock_analyzer.aws.bedrock import ENDPOINT_QUOTA_KEYWORDS
+
+logger = logging.getLogger(__name__)
 
 
 class QuotaMapper:
@@ -28,13 +32,13 @@ class QuotaMapper:
         
     def run(self):
         """Execute quota mapping for all regions"""
-        print(f"Using model: {self.model_id}")
-        print(f"Bedrock region: {self.bedrock_region}")
+        logger.info(f"Using model: {self.model_id}")
+        logger.info(f"Bedrock region: {self.bedrock_region}")
         if self.target_region:
-            print(f"Target region: {self.target_region}\n")
+            logger.info(f"Target region: {self.target_region}\n")
         
         regions = self._get_regions_to_process()
-        print(f"Processing {len(regions)} region(s)...\n")
+        logger.info(f"Processing {len(regions)} region(s)...\n")
         
         for region in regions:
             self._process_region(region)
@@ -46,47 +50,48 @@ class QuotaMapper:
         
         if self.target_region:
             if self.target_region not in all_regions:
-                print(f"Error: Region '{self.target_region}' not found")
+                logger.error(f"Region '{self.target_region}' not found")
                 sys.exit(1)
+            # If region argument is passed, then process only that particular region
             return [self.target_region]
         
         return all_regions
     
     def _process_region(self, region: str):
         """Process quota mapping for a single region"""
-        print(f"Region: {region}")
+        logger.info(f"Region: {region}")
         
         quotas = fetch_service_quotas(region)
-        print(f"  Found {len(quotas)} quotas")
+        logger.info(f"  Found {len(quotas)} quotas")
         
         fm_list = self._load_fm_list(region)
         if not fm_list:
-            print(f"  ⊘ No FM list found, skipping\n")
+            logger.info(f"  ⊘ No FM list found, skipping\n")
             return
         
-        print(f"  Mapping quotas for {len(fm_list)} models...")
+        logger.info(f"  Mapping quotas for {len(fm_list)} models...")
         
         updated_count = 0
         for i, fm in enumerate(fm_list, 1):
             model_id = fm['model_id']
-            print(f"    [{i}/{len(fm_list)}] {model_id}...", end=' ', flush=True)
+            logger.info(f"    [{i}/{len(fm_list)}] {model_id}... ", extra={'end': ''})
             
             endpoints_to_process = self._get_endpoints_to_process(fm)
             
             if not endpoints_to_process:
-                print("⊘ (no endpoints)")
+                logger.info("⊘ (no endpoints)")
                 continue
             
+            # Call LLM
+            # For a given model get the common/base name, so that the keyword search later is not too specific to cause false negative, and not too broad to cost much tokens
             common_name = self._get_common_name(model_id)
             if not common_name:
-                print("✗ (no common name)")
+                logger.info("✗ (no common name)")
                 continue
             
             endpoints_data = {}
             for endpoint_type in endpoints_to_process:
-                if endpoint_type == 'cross-region':
-                    continue
-                
+                # Get the mapping between the current FM with the matching quotas for its RPM, TPM, TPD, concurrent invocations (if available)
                 quota_mapping = self._get_quota_mapping(
                     region, model_id, common_name, endpoint_type, quotas
                 )
@@ -97,35 +102,17 @@ class QuotaMapper:
                 fm['endpoints'] = endpoints_data
                 updated_count += 1
                 endpoint_summary = ', '.join(endpoints_data.keys())
-                print(f"✓ ({endpoint_summary})")
+                logger.info(f"✓ ({endpoint_summary})")
             else:
-                print("✗ (no mappings)")
+                logger.info("✗ (no mappings)")
         
         self._save_fm_list(region, fm_list)
-        print(f"  ✓ Updated {updated_count} models\n")
+        logger.info(f"  ✓ Updated {updated_count} models\n")
     
     def _get_endpoints_to_process(self, fm: Dict) -> List[str]:
         """Determine which endpoints to process for a model"""
-        endpoints = []
-        inference_types = fm.get('inference_types', [])
-        
-        if 'ON_DEMAND' in inference_types:
-            endpoints.append('base')
-        
-        if 'INFERENCE_PROFILE' in inference_types:
-            profiles = fm.get('inference_profiles', [])
-            
-            regional_profiles = [p for p in profiles if p in ['us', 'eu', 'jp', 'au', 'apac', 'ca']]
-            if regional_profiles:
-                endpoints.append('cross-region')
-                for profile in regional_profiles:
-                    if profile not in endpoints:
-                        endpoints.append(profile)
-            
-            if 'global' in profiles:
-                endpoints.append('global')
-        
-        return endpoints
+        # Simply return the keys from the endpoints dict
+        return list(fm.get('endpoints', {}).keys())
     
     def _get_quota_mapping(self, region: str, model_id: str, common_name: str, 
                           endpoint_type: str, quotas: List[Dict]) -> Optional[Dict]:
@@ -134,10 +121,14 @@ class QuotaMapper:
         if cache_key in self.lcode_cache:
             return copy.deepcopy(self.lcode_cache[cache_key])
         
+        # Get the candidates (list) of possible quota names for a given FM, based on the keyword search on the FM's common or base name
         matching_quotas = self._find_matching_quotas(quotas, common_name, endpoint_type)
         if not matching_quotas:
             return None
         
+        # Call LLM
+        # Inputs are the possible matching quota names for the given FM
+        # Outputs are the mapped quotas for each metrics (e.g. TPM, TPD, RPM, concurrent)
         quota_mapping = extract_quota_codes(
             self.bedrock_region, self.model_id, model_id,
             endpoint_type, matching_quotas
@@ -152,33 +143,21 @@ class QuotaMapper:
         """Find quotas matching the common name and endpoint type"""
         matching = []
         
+        required_keyword = ENDPOINT_QUOTA_KEYWORDS.get(endpoint_type)
+        if not required_keyword:
+            return matching
+        
+        # Perform keyword search to find the potential quotas for a given base/common name of an FM
         for quota in quotas:
             quota_name = quota.get('QuotaName', '').lower()
             
-            if common_name not in quota_name:
-                continue
-            
-            if endpoint_type == 'base':
-                if 'on-demand' in quota_name:
-                    matching.append({
-                        'name': quota['QuotaName'],
-                        'code': quota['QuotaCode'],
-                        'value': quota.get('Value', 0)
-                    })
-            elif endpoint_type in ['us', 'eu', 'jp', 'au', 'apac', 'ca']:
-                if 'cross-region' in quota_name:
-                    matching.append({
-                        'name': quota['QuotaName'],
-                        'code': quota['QuotaCode'],
-                        'value': quota.get('Value', 0)
-                    })
-            elif endpoint_type == 'global':
-                if 'global' in quota_name:
-                    matching.append({
-                        'name': quota['QuotaName'],
-                        'code': quota['QuotaCode'],
-                        'value': quota.get('Value', 0)
-                    })
+            # The first term below performs keyword matching "Does the quota name contain this FM common/base name?" operation
+            if common_name in quota_name and required_keyword in quota_name:
+                matching.append({
+                    'name': quota['QuotaName'],
+                    'code': quota['QuotaCode'],
+                    'value': quota.get('Value', 0)
+                })
         
         return matching
     

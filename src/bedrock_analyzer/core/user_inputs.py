@@ -3,7 +3,10 @@
 import os
 import sys
 import logging
-import yaml
+import boto3
+
+from ..utils.yaml_handler import load_yaml
+from ..utils.ui import select_from_list
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +28,7 @@ class UserInputs:
     
     def collect(self):
         """Interactive dialog to collect user inputs"""
-        logger.info("This tool calculates token usage statistics (p50, p90, TPM, TPD, RPM) and throttling metrics for Bedrock models in your AWS account.")
+        logger.info("This tool calculates token usage statistics (p50, p90, TPM, TPD, RPM) and throttling metrics for Bedrock models in your AWS account across Bedrock application inference profiles for a given foundation model.")
         logger.info("Statistics will be generated for: 1 hour, 1 day, 7 days, 14 days, and 30 days.")
         print()
 
@@ -46,7 +49,8 @@ class UserInputs:
         # Model selection loop
         while True:
             model_config = self._select_model(self.region)
-            self.models.append(model_config)
+            if model_config is not None:  
+                self.models.append(model_config)
             
             add_more = input("\nAdd another model? (y/n): ").lower()
             if add_more != 'y':
@@ -54,8 +58,7 @@ class UserInputs:
     
     def _get_current_account(self):
         """Get current AWS account ID"""
-        import boto3
-        
+
         logger.info("Getting AWS account ID...")
         try:
             sts = boto3.client('sts')
@@ -70,20 +73,13 @@ class UserInputs:
     def _select_region(self):
         """Select region with numbered list"""
         regions = self._load_regions()
-        
-        logger.info("\nAvailable regions:")
-        for i, region in enumerate(regions, 1):
-            logger.info(f"  {i}. {region}")
-        logger.info("\nHint: If your region is not listed, run ./scripts/refresh-regions.sh")
-        
-        while True:
-            try:
-                choice = int(input(f"\nSelect region (1-{len(regions)}): "))
-                if 1 <= choice <= len(regions):
-                    return regions[choice - 1]
-                logger.info(f"Please enter a number between 1 and {len(regions)}")
-            except ValueError:
-                logger.info("Please enter a valid number")
+        logger.info("\nHint: If your region is not listed, run ./bin/refresh-regions")
+        return select_from_list(
+            "Available regions:",
+            regions,
+            allow_cancel=False,
+            input_prompt=f"\nSelect region (1-{len(regions)}): "
+        )
     
     def _select_model(self, region):
         """Select model with numbered lists"""
@@ -93,76 +89,84 @@ class UserInputs:
         providers = sorted(set(m['provider'] for m in fm_list))
         
         # Select provider
-        logger.info("\nAvailable providers:")
-        for i, provider in enumerate(providers, 1):
-            logger.info(f"  {i}. {provider}")
-        logger.info(f"\nHint: To refresh models, run ./scripts/refresh-fm-list.sh {region}")
-        logger.info(f"      then ./scripts/refresh-fm-quotas-mapping.sh {region}")
-        
-        while True:
-            try:
-                choice = int(input(f"\nSelect provider (1-{len(providers)}): "))
-                if 1 <= choice <= len(providers):
-                    provider = providers[choice - 1]
-                    break
-                logger.info(f"Please enter a number between 1 and {len(providers)}")
-            except ValueError:
-                logger.info("Please enter a valid number")
+        logger.info(f"\nHint: To refresh models, run ./bin/refresh-fm-list {region}")
+        logger.info(f"      then ./bin/refresh-fm-quotas-mapping {region}")
+        provider = select_from_list(
+            "Available providers:",
+            providers,
+            allow_cancel=False,
+            input_prompt=f"\nSelect provider (1-{len(providers)}): "
+        )
         
         # Filter models by provider
         provider_models = [m for m in fm_list if m['provider'] == provider]
         
         # Select model
-        logger.info(f"\nAvailable {provider} models:")
-        for i, model in enumerate(provider_models, 1):
-            logger.info(f"  {i}. {model['model_id']}")
-        logger.info(f"\nHint: To refresh models, run ./scripts/refresh-fm-list.sh {region}")
-        logger.info(f"      then ./scripts/refresh-fm-quotas-mapping.sh {region}")
+        logger.info(f"\nHint: To refresh models, run ./bin/refresh-fm-list {region}")
+        logger.info(f"      then ./bin/refresh-fm-quotas-mapping {region}")
+        selected_model = select_from_list(
+            f"Available {provider} models:",
+            provider_models,
+            allow_cancel=False,
+            display_fn=lambda m: m['model_id'],
+            input_prompt=f"\nSelect model (1-{len(provider_models)}): "
+        )
+        model_id = selected_model['model_id']
         
-        while True:
-            try:
-                choice = int(input(f"\nSelect model (1-{len(provider_models)}): "))
-                if 1 <= choice <= len(provider_models):
-                    selected_model = provider_models[choice - 1]
-                    model_id = selected_model['model_id']
-                    break
-                logger.info(f"Please enter a number between 1 and {len(provider_models)}")
-            except ValueError:
-                logger.info("Please enter a valid number")
+        # Get endpoints for selected model
+        endpoints = selected_model.get('endpoints', {})  
         
-        # Get inference types for selected model
-        inference_types = selected_model.get('inference_types', [])
+        # Derive inference profiles from endpoints (exclude 'base')  
+        inference_profiles = sorted([k for k in endpoints.keys() if k != 'base'])  
         
         # Determine profile prefix
-        profile_prefix = self._select_profile_prefix(inference_types)
+        profile_prefix = self._select_profile_prefix(endpoints, inference_profiles)
+        
+        # Handle skipped model  
+        if profile_prefix is None and not endpoints:  
+            logger.info("Skipping this model.")  
+            return None  
         
         return {
             'model_id': model_id,
             'profile_prefix': profile_prefix
         }
     
-    def _select_profile_prefix(self, inference_types):
+    def _select_profile_prefix(self, endpoints, inference_profiles):  
         """Select inference profile prefix based on supported types"""
-        # If only INFERENCE_PROFILE is supported, profile is required
-        if inference_types == ['INFERENCE_PROFILE']:
+        # Check if base model is available
+        has_base = 'base' in endpoints  
+        
+        if not has_base:  
+            # Only inference profiles available
             logger.info("\nThis model only supports inference profiles.")
-            choices = ['us', 'eu', 'ap', 'global']
+            choices = inference_profiles if inference_profiles else []  
         else:
-            choices = ['us', 'eu', 'ap', 'global', 'None (base model)']
+            # Add base model option if available
+            choices = inference_profiles + ['None (base model)'] if inference_profiles else ['None (base model)']
         
-        logger.info("\nAvailable inference profile prefixes:")
-        for i, choice in enumerate(choices, 1):
-            logger.info(f"  {i}. {choice}")
+        # Handle empty endpoints case  
+        if not choices:  
+            logger.error("\n⚠️  ERROR: This model has no on-demand or inference profile endpoints in metadata.")  
+            logger.error("This may indicate incomplete metadata or the model is only available via provisioned throughput.")  
+            logger.info("\nYou can either:")  
+            logger.info("  1. Skip this model (press Enter)")  
+            logger.info("  2. Manually enter the full model ID with prefix (e.g., 'us.claude-haiku-4-5-20251001-v1:0' or just 'claude-haiku-4-5-20251001-v1:0' for base)")  
+            manual_input = input("\nEnter model ID (or press Enter to skip): ").strip()  
+            if not manual_input:  
+                return None  
+            # Parse manual input  
+            if '.' in manual_input:  
+                return manual_input.split('.')[0]  # Return prefix  
+            return None  # Return None for base model  
         
-        while True:
-            try:
-                selection = int(input(f"\nSelect profile prefix (1-{len(choices)}): "))
-                if 1 <= selection <= len(choices):
-                    choice = choices[selection - 1]
-                    return None if 'None' in choice else choice
-                logger.info(f"Please enter a number between 1 and {len(choices)}")
-            except ValueError:
-                logger.info("Please enter a valid number")
+        choice = select_from_list(
+            "Available inference profile prefixes:",
+            choices,
+            allow_cancel=False,
+            input_prompt=f"\nSelect profile prefix (1-{len(choices)}): "
+        )
+        return None if 'None' in choice else choice
     
     def _configure_granularity(self):
         """Configure data granularity for each time period"""
@@ -260,12 +264,11 @@ class UserInputs:
         
         if not os.path.exists(regions_file) or os.path.getsize(regions_file) == 0:
             logger.error("Regions list not found: metadata/regions.yml")
-            logger.error("Please run: ./scripts/refresh-regions.sh")
+            logger.error("Please run: ./bin/refresh-regions")
             sys.exit(1)
         
-        with open(regions_file, 'r', encoding='utf-8') as f:
-            data = yaml.safe_load(f)
-            return data.get('regions', [])
+        data = load_yaml(regions_file)
+        return data.get('regions', [])
     
     def _ensure_fm_list(self, region):
         """Ensure FM list exists for region"""
@@ -277,13 +280,12 @@ class UserInputs:
         
         if not os.path.exists(fm_file) or os.path.getsize(fm_file) == 0:
             logger.error(f"Foundation model list not found: {fm_file}")
-            logger.error(f"Please run: ./scripts/refresh-fm-list.sh {region}")
+            logger.error(f"Please run: ./bin/refresh-fm-list {region}")
             sys.exit(1)
     
     def _load_fm_list(self, region):
         """Load foundation models for region"""
         fm_file = f'metadata/fm-list-{region}.yml'
         
-        with open(fm_file, 'r', encoding='utf-8') as f:
-            data = yaml.safe_load(f)
-            return data.get('models', [])
+        data = load_yaml(fm_file)
+        return data.get('models', [])

@@ -55,16 +55,20 @@ models:
   - INFERENCE_PROFILE
   model_id: amazon.nova-premier-v1:0
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.nova-premier-v1:0:1000k
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.nova-premier-v1:0:20k
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.nova-premier-v1:0:8k
   provider: Amazon
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: amazon.nova-premier-v1:0:mm
   provider: Amazon
 - endpoints:
@@ -202,7 +206,8 @@ models:
   - INFERENCE_PROFILE
   model_id: anthropic.claude-3-haiku-20240307-v1:0
   provider: Anthropic
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: anthropic.claude-3-haiku-20240307-v1:0:200k
   provider: Anthropic
 - endpoints:
@@ -473,7 +478,8 @@ models:
   - INFERENCE_PROFILE
   model_id: meta.llama3-1-70b-instruct-v1:0
   provider: Meta
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: meta.llama3-1-70b-instruct-v1:0:128k
   provider: Meta
 - endpoints:
@@ -495,7 +501,8 @@ models:
   - INFERENCE_PROFILE
   model_id: meta.llama3-1-8b-instruct-v1:0
   provider: Meta
-- inference_types: []
+- endpoints: {}
+  inference_types: []
   model_id: meta.llama3-1-8b-instruct-v1:0:128k
   provider: Meta
 - endpoints:
@@ -566,9 +573,27 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-22EF3256
+          name: On-demand model inference requests per minute for Meta Llama 3.3 70B
+            Instruct
         tpd: null
-        tpm: null
+        tpm:
+          code: L-372A660C
+          name: On-demand model inference tokens per minute for Meta Llama 3.3 70B
+            Instruct
+    us:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-DEDE703C
+          name: Cross-region model inference requests per minute for Meta Llama 3.3
+            70B Instruct
+        tpd: null
+        tpm:
+          code: L-0E7AA8B7
+          name: Cross-region model inference tokens per minute for Meta Llama 3.3
+            70B Instruct
   inference_profiles:
   - us
   inference_types:
@@ -576,7 +601,20 @@ models:
   - INFERENCE_PROFILE
   model_id: meta.llama3-3-70b-instruct-v1:0
   provider: Meta
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-4F18EF2F
+          name: Cross-region model inference requests per minute for Meta Llama 4
+            Maverick V1
+        tpd: null
+        tpm:
+          code: L-DE3FBBF4
+          name: Cross-region model inference tokens per minute for Meta Llama 4 Maverick
+            V1
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
@@ -624,9 +662,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-25B50707
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 120B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-9DC5F595
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 120B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-120b-1:0
@@ -635,9 +677,13 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-AF7F0545
+          name: On-demand model inference requests per minute for OpenAI GPT OSS 20B
         tpd: null
-        tpm: null
+        tpm:
+          code: L-036E14D8
+          name: On-demand model inference tokens per minute for OpenAI GPT OSS 20B
   inference_types:
   - ON_DEMAND
   model_id: openai.gpt-oss-20b-1:0
@@ -740,61 +786,80 @@ models:
   - INFERENCE_PROFILE
   model_id: stability.stable-creative-upscale-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-D3D76E8D
+          name: Cross-region model inference requests per minute for Stable Image
+            Fast Upscale
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-fast-upscale-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints: {}
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-control-sketch-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints: {}
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-control-structure-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints: {}
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-erase-object-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints: {}
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-inpaint-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints: {}
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-remove-background-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints: {}
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-search-recolor-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints: {}
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-search-replace-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints: {}
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-style-guide-v1:0
   provider: Stability AI
-- inference_profiles:
+- endpoints: {}
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
@@ -831,3 +896,15 @@ models:
   - INFERENCE_PROFILE
   model_id: twelvelabs.pegasus-1-2-v1:0
   provider: TwelveLabs
+- inference_profiles:
+  - us
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: writer.palmyra-x4-v1:0
+  provider: Writer
+- inference_profiles:
+  - us
+  inference_types:
+  - INFERENCE_PROFILE
+  model_id: writer.palmyra-x5-v1:0
+  provider: Writer
