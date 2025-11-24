@@ -80,10 +80,12 @@
     <div class="merged-table">
         <h3>Statistics Summary</h3>
         <p style="font-style: italic; color: #666; margin-bottom: 10px;">Note: Numbers are rounded to the nearest integer</p>
+        
+        {# Table 1: Original Metrics #}
         <table>
             <tr>
-                <th>Metric</th>
-                <th>Statistic</th>
+                <th style="width: 230px;">Metric</th>
+                <th style="width: 100px;">Statistic</th>
                 {% for period in ['1hour', '1day', '7days', '14days', '30days'] %}
                 <th>
                     {{ period.upper() }}<br>
@@ -98,14 +100,13 @@
                 {% endfor %}
             </tr>
             
-            {% set metrics = ['InputTokenCount', 'OutputTokenCount', 'Invocations', 'InvocationThrottles', 'InvocationClientErrors', 'InvocationServerErrors', 'InvocationLatency', 'TPM', 'RPM', 'TPD'] %}
+            {% set metrics = ['InputTokenCount', 'OutputTokenCount', 'Invocations', 'InvocationThrottles', 'InvocationClientErrors', 'InvocationServerErrors', 'InvocationLatency'] %}
             {% set stats = ['P50', 'P90', 'Average', 'Total', 'Data Points'] %}
-            {% set metrics_with_total = ['InputTokenCount', 'OutputTokenCount', 'Invocations', 'InvocationThrottles', 'InvocationClientErrors', 'InvocationServerErrors'] %}  {# Metrics that should show Total row #}
+            {% set metrics_with_total = ['InputTokenCount', 'OutputTokenCount', 'Invocations', 'InvocationThrottles', 'InvocationClientErrors', 'InvocationServerErrors'] %}
             
             {% for metric in metrics %}
             {% set row_class = metric.lower().replace('_', '') + '-row' %}
             {% for stat in stats %}
-            {# Only render row if it's not a Total row for metrics without total #}
             {% if not (stat == 'Total' and metric not in metrics_with_total) %}
             <tr class="{{ row_class }}">
                 {% if loop.first %}
@@ -114,25 +115,15 @@
                     <span style="font-size: 0.75em; font-style: italic; color: #888; font-weight: normal;">
                         {% if metric == 'InvocationLatency' %}
                         aggregated with AVERAGE (milliseconds)
-                        {% elif metric in ['TPM', 'TPD'] %}
-                        derived from token counts
-                        {% elif metric in ['RPM'] %}
-                        derived from invocations metric
                         {% else %}
                         aggregated with SUM
                         {% endif %}
                     </span>
                 </td>
                 {% endif %}
-                <td class="stat-cell">{{ stat }}</td>
+                <td>{{ stat }}</td>
                 {% for period in ['1hour', '1day', '7days', '14days', '30days'] %}
-                {% if period == '1hour' and metric == 'TPD' %}
-                <td class="na">N/A</td>
-                {% else %}
-                {# Use __AGGREGATED__ data for tables (always present for consistency) #}
-                {% set period_data = time_periods.get(period, {}) %}
-                {% set model_data = period_data.get('__AGGREGATED__', {}) if period_data else {} %}
-                {% set metric_data = model_data.get(metric, {}) if model_data else {} %}
+                {% set metric_data = time_periods[period]['__AGGREGATED__'].get(metric, {}) %}
                 {% if stat == 'P50' %}
                 <td style="text-align: right;">{{ "{:,}".format(metric_data.p50|round|int) if metric_data.p50 is defined else "0" }}</td>
                 {% elif stat == 'P90' %}
@@ -144,11 +135,69 @@
                 {% elif stat == 'Data Points' %}
                 <td style="text-align: right;">{{ metric_data.count if metric_data.count is defined else 0 }}</td>
                 {% endif %}
-                {% endif %}
                 {% endfor %}
             </tr>
             {% endif %}
             {% endfor %}
+            {% endfor %}
+        </table>
+        
+        {# Table 2: Rate Metrics (TPM, RPM, TPD) - Always 1-min data #}
+        <table style="margin-top: 0;">
+            <tr>
+                <th style="width: 230px;">Metric</th>
+                <th style="width: 100px;">Statistic</th>
+                {% for period in ['1hour', '1day', '7days', '14days', '30days'] %}
+                <th>
+                    {{ period.upper() }}<br>
+                    <span style="font-size: 0.75em; font-style: italic; color: #888; font-weight: normal;">
+                        1-min data
+                    </span>
+                </th>
+                {% endfor %}
+            </tr>
+            
+            {% set rate_metrics = ['TPM_1min', 'RPM_1min', 'TPD'] %}
+            {% set rate_metric_labels = {'TPM_1min': 'TPM', 'RPM_1min': 'RPM', 'TPD': 'TPD'} %}
+            {% set stats = ['P50', 'P90', 'Average', 'Data Points'] %}
+            
+            {% for metric in rate_metrics %}
+            {% if metric != 'TPD' or period != '1hour' %}
+            {% set row_class = metric.lower().replace('_', '') + '-row' %}
+            {% for stat in stats %}
+            <tr class="{{ row_class }}">
+                {% if loop.first %}
+                <td class="metric-cell" rowspan="4">
+                    {{ rate_metric_labels[metric] }}<br>
+                    <span style="font-size: 0.75em; font-style: italic; color: #888; font-weight: normal;">
+                        {% if metric in ['TPM_1min', 'TPD'] %}
+                        derived from token counts
+                        {% elif metric == 'RPM_1min' %}
+                        derived from invocations
+                        {% endif %}
+                    </span>
+                </td>
+                {% endif %}
+                <td>{{ stat }}</td>
+                {% for period in ['1hour', '1day', '7days', '14days', '30days'] %}
+                {% if metric == 'TPD' and period == '1hour' %}
+                <td style="text-align: right; color: #999;">N/A</td>
+                {% else %}
+                {% set metric_data = time_periods[period]['__AGGREGATED__'].get(metric, {}) %}
+                {% if stat == 'P50' %}
+                <td style="text-align: right;">{{ "{:,}".format(metric_data.p50|round|int) if metric_data.p50 is defined else "0" }}</td>
+                {% elif stat == 'P90' %}
+                <td style="text-align: right;">{{ "{:,}".format(metric_data.p90|round|int) if metric_data.p90 is defined else "0" }}</td>
+                {% elif stat == 'Average' %}
+                <td style="text-align: right;">{{ "{:,}".format(metric_data.avg|round|int) if metric_data.avg is defined else "0" }}</td>
+                {% elif stat == 'Data Points' %}
+                <td style="text-align: right;">{{ metric_data.count if metric_data.count is defined else 0 }}</td>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            {% endif %}
             {% endfor %}
         </table>
     </div>
@@ -657,26 +706,32 @@
                             maxTicksLimit: 12,
                             callback: function(value, index, ticks) {
                                 const date = new Date(value);
+                                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
                                 
                                 // Show date on first tick
                                 if (index === 0) {
-                                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + 
-                                           date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                    return dateStr + ' ' + timeStr;
                                 }
                                 
-                                // Compare with previous tick
-                                const prevDate = new Date(ticks[index - 1].value);
+                                // Check if any previous tick has the same date
+                                let sameDate = false;
+                                for (let i = 0; i < index; i++) {
+                                    const prevDate = new Date(ticks[i].value);
+                                    const prevDateStr = prevDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                    if (prevDateStr === dateStr) {
+                                        sameDate = true;
+                                        break;
+                                    }
+                                }
                                 
-                                // Show date if day, month, or year changed
-                                if (date.getDate() !== prevDate.getDate() || 
-                                    date.getMonth() !== prevDate.getMonth() || 
-                                    date.getFullYear() !== prevDate.getFullYear()) {
-                                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + 
-                                           date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                // Show date if this is the first tick with this date
+                                if (!sameDate) {
+                                    return dateStr + ' ' + timeStr;
                                 }
                                 
                                 // Otherwise just show time
-                                return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                return timeStr;
                             }
                         },
                         display: true, 
@@ -730,7 +785,6 @@
                             borderColor: '#FF8C00',
                             backgroundColor: '#FF8C0020',
                             borderWidth: 1.2,
-                            borderDash: [10, 5],
                             pointRadius: 0.5,
                             tension: 0.1,
                             spanGaps: false
@@ -819,6 +873,23 @@
                 }
             }
             
+            // Add note about peak values for TPM/RPM when granularity > 1 minute
+            const granularityConfig = {{ granularity_config | tojson }};
+            const currentGranularity = granularityConfig['{{ time_period }}'] || 60;
+            if ((metricType === 'TPM' || metricType === 'RPM') && currentGranularity > 60) {
+                const existingNote = canvasElement.previousElementSibling;
+                if (!existingNote || !existingNote.classList.contains('peak-note')) {
+                    const note = document.createElement('p');
+                    note.className = 'peak-note';
+                    note.style.fontSize = '0.8em';
+                    note.style.fontStyle = 'italic';
+                    note.style.color = '#888';
+                    note.style.marginBottom = '5px';
+                    note.innerHTML = `Note: Values show peak ${metricType} within each aggregation period (for quota monitoring)`;
+                    canvasElement.parentNode.insertBefore(note, canvasElement);
+                }
+            }
+            
             // Skip chart creation if there's no data
             if (chartData.datasets.length === 0) {
                 console.log(`No data for ${metricType} in {{ time_period }}, skipping chart`);
@@ -829,20 +900,28 @@
             try {
                 // Create unique tick callback with closure for this chart
                 const createTickCallback = () => {
-                    let lastDisplayedDateStr = null;
+                    const timePeriod = '{{ time_period }}';
+                    const isLongPeriod = ['7days', '14days', '30days'].includes(timePeriod);
+                    
                     return function(value, index, ticks) {
                         const date = new Date(value);
-                        const currentDateStr = date.toDateString();
+                        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
                         
-                        // Show date on first tick or when date changes
-                        if (index === 0 || currentDateStr !== lastDisplayedDateStr) {
-                            lastDisplayedDateStr = currentDateStr;
-                            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + 
-                                   date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+                        if (isLongPeriod) {
+                            // For 7/14/30 days: show date on every tick (two lines)
+                            return dateStr + '\n' + timeStr;
+                        } else {
+                            // For 1hour/1day: show date only at first, midnight, and last tick
+                            const isFirst = index === 0;
+                            const isLast = index === ticks.length - 1;
+                            const isMidnight = date.getHours() === 0 && date.getMinutes() === 0;
+                            
+                            if (isFirst || isLast || isMidnight) {
+                                return dateStr + ' ' + timeStr;
+                            }
+                            return timeStr;
                         }
-                        
-                        // Otherwise just show time
-                        return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
                     };
                 };
                 

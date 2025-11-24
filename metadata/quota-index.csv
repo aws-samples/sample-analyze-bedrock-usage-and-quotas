@@ -25,6 +25,8 @@ amazon.nova-lite-v1:0,base,tpm,L-70423BF8,On-demand model inference tokens per m
 amazon.nova-lite-v1:0,eu,rpm,L-89F8391A,Cross-region model inference requests per minute for Amazon Nova Lite
 amazon.nova-lite-v1:0,eu,tpm,L-7C42E72A,Cross-region model inference tokens per minute for Amazon Nova Lite
 amazon.rerank-v1:0,base,rpm,L-AAB0080F,On-demand model inference requests per minute for Amazon Rerank 1.0
+amazon.titan-embed-image-v1,base,rpm,L-DF0E34D4,On-demand model inference requests per minute for Amazon Titan Multimodal Embeddings G1
+amazon.titan-embed-image-v1,base,tpm,L-ABC24664,On-demand model inference tokens per minute for Amazon Titan Multimodal Embeddings G1
 amazon.titan-embed-text-v2:0,base,rpm,L-26C560CE,On-demand model inference requests per minute for Amazon Titan Text Embeddings V2
 amazon.titan-embed-text-v2:0,base,tpm,L-DE641971,On-demand model inference tokens per minute for Amazon Titan Text Embeddings V2
 amazon.titan-text-express-v1,base,rpm,L-9EAB0D12,On-demand model inference requests per minute for Amazon Titan Text Express
@@ -34,35 +36,33 @@ amazon.titan-text-lite-v1,base,tpm,L-70BE83E9,On-demand model inference tokens p
 anthropic.claude-3-haiku-20240307-v1:0,base,rpm,L-2DC80978,On-demand model inference requests per minute for Anthropic Claude 3 Haiku
 anthropic.claude-3-haiku-20240307-v1:0,base,tpm,L-8CE99163,On-demand model inference tokens per minute for Anthropic Claude 3 Haiku
 anthropic.claude-3-haiku-20240307-v1:0,us,rpm,L-616A3F5B,Cross-region model inference requests per minute for Anthropic Claude 3 Haiku
-anthropic.claude-3-haiku-20240307-v1:0,us,tpd,L-6120CF2D,Model invocation max tokens per day for Anthropic Claude Haiku 4.5 (doubled for cross-region calls)
 anthropic.claude-3-haiku-20240307-v1:0,us,tpm,L-DCADBC78,Cross-region model inference tokens per minute for Anthropic Claude 3 Haiku
+anthropic.claude-3-haiku-20240307-v1:0,apac,rpm,L-616A3F5B,Cross-region model inference requests per minute for Anthropic Claude 3 Haiku
+anthropic.claude-3-haiku-20240307-v1:0,apac,tpm,L-DCADBC78,Cross-region model inference tokens per minute for Anthropic Claude 3 Haiku
 anthropic.claude-3-haiku-20240307-v1:0,eu,rpm,L-616A3F5B,Cross-region model inference requests per minute for Anthropic Claude 3 Haiku
-anthropic.claude-3-haiku-20240307-v1:0,eu,tpd,L-6120CF2D,Model invocation max tokens per day for Anthropic Claude Haiku 4.5 (doubled for cross-region calls)
 anthropic.claude-3-haiku-20240307-v1:0,eu,tpm,L-DCADBC78,Cross-region model inference tokens per minute for Anthropic Claude 3 Haiku
 anthropic.claude-3-sonnet-20240229-v1:0,base,rpm,L-F406804E,On-demand model inference requests per minute for Anthropic Claude 3 Sonnet
 anthropic.claude-3-sonnet-20240229-v1:0,base,tpm,L-4C35BB2A,On-demand model inference tokens per minute for Anthropic Claude 3 Sonnet
-anthropic.claude-3-sonnet-20240229-v1:0,apac,rpm,L-3D8CC480,Cross-region model inference requests per minute for Anthropic Claude 3.7 Sonnet V1
-anthropic.claude-3-sonnet-20240229-v1:0,apac,tpd,L-9EB71894,Model invocation max tokens per day for Anthropic Claude 3.7 Sonnet V1 (doubled for cross-region calls)
-anthropic.claude-3-sonnet-20240229-v1:0,apac,tpm,L-6E888CC2,Cross-region model inference tokens per minute for Anthropic Claude 3.7 Sonnet V1
 anthropic.claude-3-sonnet-20240229-v1:0,us,rpm,L-46591118,Cross-region model inference requests per minute for Anthropic Claude 3 Sonnet
 anthropic.claude-3-sonnet-20240229-v1:0,us,tpm,L-5DF13F64,Cross-region model inference tokens per minute for Anthropic Claude 3 Sonnet
-anthropic.claude-3-sonnet-20240229-v1:0,eu,rpm,L-3D8CC480,Cross-region model inference requests per minute for Anthropic Claude 3.7 Sonnet V1
-anthropic.claude-3-sonnet-20240229-v1:0,eu,tpd,L-9EB71894,Model invocation max tokens per day for Anthropic Claude 3.7 Sonnet V1 (doubled for cross-region calls)
-anthropic.claude-3-sonnet-20240229-v1:0,eu,tpm,L-6E888CC2,Cross-region model inference tokens per minute for Anthropic Claude 3.7 Sonnet V1
+anthropic.claude-3-sonnet-20240229-v1:0,apac,rpm,L-46591118,Cross-region model inference requests per minute for Anthropic Claude 3 Sonnet
+anthropic.claude-3-sonnet-20240229-v1:0,apac,tpm,L-5DF13F64,Cross-region model inference tokens per minute for Anthropic Claude 3 Sonnet
+anthropic.claude-3-sonnet-20240229-v1:0,eu,rpm,L-46591118,Cross-region model inference requests per minute for Anthropic Claude 3 Sonnet
+anthropic.claude-3-sonnet-20240229-v1:0,eu,tpm,L-5DF13F64,Cross-region model inference tokens per minute for Anthropic Claude 3 Sonnet
 anthropic.claude-haiku-4-5-20251001-v1:0,global,rpm,L-E5084BBA,Global cross-region model inference requests per minute for Anthropic Claude Haiku 4.5
 anthropic.claude-haiku-4-5-20251001-v1:0,global,tpd,L-B5C049AE,Global cross-region model inference tokens per day for Anthropic Claude Haiku 4.5
 anthropic.claude-haiku-4-5-20251001-v1:0,global,tpm,L-9A11C666,Global cross-region model inference tokens per minute for Anthropic Claude Haiku 4.5
 anthropic.claude-haiku-4-5-20251001-v1:0,us,rpm,L-CCA5DF70,Cross-region model inference requests per minute for Anthropic Claude Haiku 4.5
-anthropic.claude-haiku-4-5-20251001-v1:0,us,tpd,L-6120CF2D,Model invocation max tokens per day for Anthropic Claude Haiku 4.5 (doubled for cross-region calls)
+anthropic.claude-haiku-4-5-20251001-v1:0,us,tpd,L-B5C049AE,Global cross-region model inference tokens per day for Anthropic Claude Haiku 4.5
 anthropic.claude-haiku-4-5-20251001-v1:0,us,tpm,L-58BE175A,Cross-region model inference tokens per minute for Anthropic Claude Haiku 4.5
 anthropic.claude-haiku-4-5-20251001-v1:0,jp,rpm,L-CCA5DF70,Cross-region model inference requests per minute for Anthropic Claude Haiku 4.5
-anthropic.claude-haiku-4-5-20251001-v1:0,jp,tpd,L-6120CF2D,Model invocation max tokens per day for Anthropic Claude Haiku 4.5 (doubled for cross-region calls)
+anthropic.claude-haiku-4-5-20251001-v1:0,jp,tpd,L-B5C049AE,Global cross-region model inference tokens per day for Anthropic Claude Haiku 4.5
 anthropic.claude-haiku-4-5-20251001-v1:0,jp,tpm,L-58BE175A,Cross-region model inference tokens per minute for Anthropic Claude Haiku 4.5
 anthropic.claude-haiku-4-5-20251001-v1:0,eu,rpm,L-CCA5DF70,Cross-region model inference requests per minute for Anthropic Claude Haiku 4.5
-anthropic.claude-haiku-4-5-20251001-v1:0,eu,tpd,L-6120CF2D,Model invocation max tokens per day for Anthropic Claude Haiku 4.5 (doubled for cross-region calls)
+anthropic.claude-haiku-4-5-20251001-v1:0,eu,tpd,L-B5C049AE,Global cross-region model inference tokens per day for Anthropic Claude Haiku 4.5
 anthropic.claude-haiku-4-5-20251001-v1:0,eu,tpm,L-58BE175A,Cross-region model inference tokens per minute for Anthropic Claude Haiku 4.5
 anthropic.claude-haiku-4-5-20251001-v1:0,au,rpm,L-CCA5DF70,Cross-region model inference requests per minute for Anthropic Claude Haiku 4.5
-anthropic.claude-haiku-4-5-20251001-v1:0,au,tpd,L-6120CF2D,Model invocation max tokens per day for Anthropic Claude Haiku 4.5 (doubled for cross-region calls)
+anthropic.claude-haiku-4-5-20251001-v1:0,au,tpd,L-B5C049AE,Global cross-region model inference tokens per day for Anthropic Claude Haiku 4.5
 anthropic.claude-haiku-4-5-20251001-v1:0,au,tpm,L-58BE175A,Cross-region model inference tokens per minute for Anthropic Claude Haiku 4.5
 cohere.embed-english-v3,base,rpm,L-FF8E7864,On-demand model inference requests per minute for Cohere Embed English
 cohere.embed-english-v3,base,tpm,L-A2BE277A,On-demand model inference tokens per minute for Cohere Embed English
@@ -119,8 +119,8 @@ amazon.titan-tg1-large,base,rpm,L-7DBB06FD,On-demand model inference requests pe
 amazon.titan-tg1-large,base,tpm,L-2B715ABD,On-demand model inference tokens per minute for Amazon Titan Image Generator G1
 anthropic.claude-3-5-haiku-20241022-v1:0,base,rpm,L-C7438F8F,On-demand model inference requests per minute for Anthropic Claude 3.5 Haiku
 anthropic.claude-3-5-haiku-20241022-v1:0,base,tpm,L-7AB4ABDD,On-demand model inference tokens per minute for Anthropic Claude 3.5 Haiku
-anthropic.claude-3-5-haiku-20241022-v1:0,us,rpm,L-616A3F5B,Cross-region model inference requests per minute for Anthropic Claude 3 Haiku
-anthropic.claude-3-5-haiku-20241022-v1:0,us,tpd,L-6120CF2D,Model invocation max tokens per day for Anthropic Claude Haiku 4.5 (doubled for cross-region calls)
+anthropic.claude-3-5-haiku-20241022-v1:0,us,rpm,L-252DF594,Cross-Region model inference requests per minute for Anthropic Claude 3.5 Haiku
+anthropic.claude-3-5-haiku-20241022-v1:0,us,tpm,L-4BF37C17,Cross-Region model inference tokens per minute for Anthropic Claude 3.5 Haiku
 anthropic.claude-3-5-sonnet-20240620-v1:0,base,rpm,L-254CACF4,On-demand model inference requests per minute for Anthropic Claude 3.5 Sonnet
 anthropic.claude-3-5-sonnet-20240620-v1:0,base,tpm,L-A50569E5,On-demand model inference tokens per minute for Anthropic Claude 3.5 Sonnet
 anthropic.claude-3-5-sonnet-20240620-v1:0,us,rpm,L-F457545D,Cross-region model inference requests per minute for Anthropic Claude 3.5 Sonnet
@@ -131,10 +131,10 @@ anthropic.claude-3-5-sonnet-20240620-v1:0,eu,rpm,L-F457545D,Cross-region model i
 anthropic.claude-3-5-sonnet-20240620-v1:0,eu,tpm,L-479B647F,Cross-region model inference tokens per minute for Anthropic Claude 3.5 Sonnet
 anthropic.claude-3-5-sonnet-20241022-v2:0,base,rpm,L-79E773B3,On-demand model inference requests per minute for Anthropic Claude 3.5 Sonnet V2
 anthropic.claude-3-5-sonnet-20241022-v2:0,base,tpm,L-AD41C330,On-demand model inference tokens per minute for Anthropic Claude 3.5 Sonnet V2
-anthropic.claude-3-5-sonnet-20241022-v2:0,apac,rpm,L-1D3E59A3,Cross-Region model inference requests per minute for Anthropic Claude 3.5 Sonnet V2
-anthropic.claude-3-5-sonnet-20241022-v2:0,apac,tpm,L-FF8B4E28,Cross-Region model inference tokens per minute for Anthropic Claude 3.5 Sonnet V2
 anthropic.claude-3-5-sonnet-20241022-v2:0,us,rpm,L-1D3E59A3,Cross-Region model inference requests per minute for Anthropic Claude 3.5 Sonnet V2
 anthropic.claude-3-5-sonnet-20241022-v2:0,us,tpm,L-FF8B4E28,Cross-Region model inference tokens per minute for Anthropic Claude 3.5 Sonnet V2
+anthropic.claude-3-5-sonnet-20241022-v2:0,apac,rpm,L-1D3E59A3,Cross-Region model inference requests per minute for Anthropic Claude 3.5 Sonnet V2
+anthropic.claude-3-5-sonnet-20241022-v2:0,apac,tpm,L-FF8B4E28,Cross-Region model inference tokens per minute for Anthropic Claude 3.5 Sonnet V2
 anthropic.claude-3-7-sonnet-20250219-v1:0,us,rpm,L-3D8CC480,Cross-region model inference requests per minute for Anthropic Claude 3.7 Sonnet V1
 anthropic.claude-3-7-sonnet-20250219-v1:0,us,tpd,L-9EB71894,Model invocation max tokens per day for Anthropic Claude 3.7 Sonnet V1 (doubled for cross-region calls)
 anthropic.claude-3-7-sonnet-20250219-v1:0,us,tpm,L-6E888CC2,Cross-region model inference tokens per minute for Anthropic Claude 3.7 Sonnet V1
@@ -228,7 +228,6 @@ qwen.qwen3-coder-480b-a35b-v1:0,base,tpm,L-4D0E44C8,On-demand model inference to
 stability.stable-conservative-upscale-v1:0,us,rpm,L-0C7F3C72,Cross-region model inference requests per minute for Stable Image Conservative Upscale
 stability.stable-creative-upscale-v1:0,us,rpm,L-DB8B3F46,Cross-region model inference requests per minute for Stable Image Creative Upscale
 stability.stable-fast-upscale-v1:0,us,rpm,L-D3D76E8D,Cross-region model inference requests per minute for Stable Image Fast Upscale
-stability.stable-style-transfer-v1:0,us,rpm,L-42A5F078,Cross-region model inference requests per minute for Stable Image Style Transfer
 twelvelabs.pegasus-1-2-v1:0,us,rpm,L-6E046197,Cross-region model inference requests per minute for Twelve Labs Pegasus
 twelvelabs.pegasus-1-2-v1:0,apac,rpm,L-6E046197,Cross-region model inference requests per minute for Twelve Labs Pegasus
 twelvelabs.pegasus-1-2-v1:0,eu,rpm,L-6E046197,Cross-region model inference requests per minute for Twelve Labs Pegasus
@@ -238,6 +237,7 @@ writer.palmyra-x5-v1:0,us,rpm,L-D655BF6C,Cross-region model inference requests p
 writer.palmyra-x5-v1:0,us,tpm,L-90DFE70F,Cross-region model inference tokens per minute for Writer AI Palmyra X5 V1
 twelvelabs.marengo-embed-2-7-v1:0,apac,rpm,L-E967C2DE,Cross-region model inference requests per minute for Twelve Labs Marengo
 twelvelabs.marengo-embed-2-7-v1:0,eu,rpm,L-E967C2DE,Cross-region model inference requests per minute for Twelve Labs Marengo
+twelvelabs.marengo-embed-2-7-v1:0,us,rpm,L-E967C2DE,Cross-region model inference requests per minute for Twelve Labs Marengo
 twelvelabs.marengo-embed-3-0-v1:0,base,concurrent,L-BC3096B9,On-demand InvokeModel async concurrent requests for TwelveLabs Marengo Embed 3.0
 twelvelabs.marengo-embed-3-0-v1:0,base,rpm,L-8CBCC2C0,On-demand model inference requests per minute for TwelveLabs Marengo Embed 3.0
 twelvelabs.marengo-embed-3-0-v1:0,eu,rpm,L-E5197E26,Cross-region model inference requests per minute for TwelveLabs Marengo Embed 3.0

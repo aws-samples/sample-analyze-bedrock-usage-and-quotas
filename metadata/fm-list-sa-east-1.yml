@@ -3,15 +3,20 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-DF0E34D4
+          name: On-demand model inference requests per minute for Amazon Titan Multimodal
+            Embeddings G1
         tpd: null
-        tpm: null
+        tpm:
+          code: L-ABC24664
+          name: On-demand model inference tokens per minute for Amazon Titan Multimodal
+            Embeddings G1
   inference_types:
   - ON_DEMAND
   model_id: amazon.titan-embed-image-v1
   provider: Amazon
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: amazon.titan-embed-image-v1:0
   provider: Amazon
@@ -49,8 +54,7 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-text-express-v1
   provider: Amazon
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: amazon.titan-text-express-v1:0:8k
   provider: Amazon
@@ -71,8 +75,7 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-text-lite-v1
   provider: Amazon
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: amazon.titan-text-lite-v1:0:4k
   provider: Amazon
@@ -169,8 +172,7 @@ models:
   - ON_DEMAND
   model_id: cohere.embed-english-v3
   provider: Cohere
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: cohere.embed-english-v3:0:512
   provider: Cohere
@@ -185,8 +187,7 @@ models:
   - ON_DEMAND
   model_id: cohere.embed-multilingual-v3
   provider: Cohere
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: cohere.embed-multilingual-v3:0:512
   provider: Cohere

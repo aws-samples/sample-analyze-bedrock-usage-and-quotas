@@ -57,9 +57,9 @@ models:
           name: Cross-region model inference requests per minute for Anthropic Claude
             Haiku 4.5
         tpd:
-          code: L-6120CF2D
-          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
-            (doubled for cross-region calls)
+          code: L-B5C049AE
+          name: Global cross-region model inference tokens per day for Anthropic Claude
+            Haiku 4.5
         tpm:
           code: L-58BE175A
           name: Cross-region model inference tokens per minute for Anthropic Claude
@@ -93,12 +93,10 @@ models:
   - INFERENCE_PROFILE
   model_id: anthropic.claude-sonnet-4-20250514-v1:0
   provider: Anthropic
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: anthropic.claude-sonnet-4-20250514-v1:0:200k
   provider: Anthropic
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: anthropic.claude-sonnet-4-20250514-v1:0:32k
   provider: Anthropic
 - endpoints:
@@ -195,12 +193,10 @@ models:
   - INFERENCE_PROFILE
   model_id: meta.llama4-maverick-17b-instruct-v1:0
   provider: Meta
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: meta.llama4-maverick-17b-instruct-v1:0:128k
   provider: Meta
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: meta.llama4-maverick-17b-instruct-v1:0:1m
   provider: Meta
 - endpoints:
@@ -222,12 +218,10 @@ models:
   - INFERENCE_PROFILE
   model_id: meta.llama4-scout-17b-instruct-v1:0
   provider: Meta
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: meta.llama4-scout-17b-instruct-v1:0:10m
   provider: Meta
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: meta.llama4-scout-17b-instruct-v1:0:128k
   provider: Meta
 - endpoints:
@@ -245,13 +239,27 @@ models:
   - INFERENCE_PROFILE
   model_id: twelvelabs.pegasus-1-2-v1:0
   provider: TwelveLabs
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: writer.palmyra-x4-v1:0
   provider: Writer
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE

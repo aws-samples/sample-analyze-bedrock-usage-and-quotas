@@ -130,8 +130,7 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-embed-text-v1
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.titan-embed-text-v1:2:8k
   provider: Amazon
 - endpoints:
@@ -168,11 +167,22 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-text-express-v1
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.titan-text-express-v1:0:8k
   provider: Amazon
 - endpoints:
+    apac:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-F457545D
+          name: Cross-region model inference requests per minute for Anthropic Claude
+            3.5 Sonnet
+        tpd: null
+        tpm:
+          code: L-479B647F
+          name: Cross-region model inference tokens per minute for Anthropic Claude
+            3.5 Sonnet
     base:
       quotas:
         concurrent: null
@@ -233,6 +243,18 @@ models:
   model_id: anthropic.claude-3-7-sonnet-20250219-v1:0
   provider: Anthropic
 - endpoints:
+    apac:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-616A3F5B
+          name: Cross-region model inference requests per minute for Anthropic Claude
+            3 Haiku
+        tpd: null
+        tpm:
+          code: L-DCADBC78
+          name: Cross-region model inference tokens per minute for Anthropic Claude
+            3 Haiku
     base:
       quotas:
         concurrent: null
@@ -256,29 +278,24 @@ models:
       quotas:
         concurrent: null
         rpm:
-          code: L-3D8CC480
+          code: L-46591118
           name: Cross-region model inference requests per minute for Anthropic Claude
-            3.7 Sonnet V1
-        tpd:
-          code: L-9EB71894
-          name: Model invocation max tokens per day for Anthropic Claude 3.7 Sonnet
-            V1 (doubled for cross-region calls)
+            3 Sonnet
+        tpd: null
         tpm:
-          code: L-6E888CC2
+          code: L-5DF13F64
           name: Cross-region model inference tokens per minute for Anthropic Claude
-            3.7 Sonnet V1
+            3 Sonnet
   inference_profiles:
   - apac
   inference_types:
   - INFERENCE_PROFILE
   model_id: anthropic.claude-3-sonnet-20240229-v1:0
   provider: Anthropic
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: anthropic.claude-3-sonnet-20240229-v1:0:200k
   provider: Anthropic
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: anthropic.claude-3-sonnet-20240229-v1:0:28k
   provider: Anthropic
 - endpoints:
@@ -305,9 +322,9 @@ models:
           name: Cross-region model inference requests per minute for Anthropic Claude
             Haiku 4.5
         tpd:
-          code: L-6120CF2D
-          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
-            (doubled for cross-region calls)
+          code: L-B5C049AE
+          name: Global cross-region model inference tokens per day for Anthropic Claude
+            Haiku 4.5
         tpm:
           code: L-58BE175A
           name: Cross-region model inference tokens per minute for Anthropic Claude

@@ -266,9 +266,15 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-DF0E34D4
+          name: On-demand model inference requests per minute for Amazon Titan Multimodal
+            Embeddings G1
         tpd: null
-        tpm: null
+        tpm:
+          code: L-ABC24664
+          name: On-demand model inference tokens per minute for Amazon Titan Multimodal
+            Embeddings G1
   inference_types:
   - ON_DEMAND
   model_id: amazon.titan-embed-image-v1
@@ -528,10 +534,7 @@ models:
           code: L-616A3F5B
           name: Cross-region model inference requests per minute for Anthropic Claude
             3 Haiku
-        tpd:
-          code: L-6120CF2D
-          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
-            (doubled for cross-region calls)
+        tpd: null
         tpm:
           code: L-DCADBC78
           name: Cross-region model inference tokens per minute for Anthropic Claude
@@ -1464,7 +1467,9 @@ models:
     us:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-E967C2DE
+          name: Cross-region model inference requests per minute for Twelve Labs Marengo
         tpd: null
         tpm: null
   inference_profiles:

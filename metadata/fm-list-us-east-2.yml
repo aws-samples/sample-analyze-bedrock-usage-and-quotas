@@ -55,20 +55,16 @@ models:
   - INFERENCE_PROFILE
   model_id: amazon.nova-premier-v1:0
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.nova-premier-v1:0:1000k
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.nova-premier-v1:0:20k
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.nova-premier-v1:0:8k
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.nova-premier-v1:0:mm
   provider: Amazon
 - endpoints:
@@ -110,14 +106,14 @@ models:
       quotas:
         concurrent: null
         rpm:
-          code: L-616A3F5B
-          name: Cross-region model inference requests per minute for Anthropic Claude
-            3 Haiku
-        tpd:
-          code: L-6120CF2D
-          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
-            (doubled for cross-region calls)
-        tpm: null
+          code: L-252DF594
+          name: Cross-Region model inference requests per minute for Anthropic Claude
+            3.5 Haiku
+        tpd: null
+        tpm:
+          code: L-4BF37C17
+          name: Cross-Region model inference tokens per minute for Anthropic Claude
+            3.5 Haiku
   inference_profiles:
   - us
   inference_types:
@@ -192,10 +188,7 @@ models:
           code: L-616A3F5B
           name: Cross-region model inference requests per minute for Anthropic Claude
             3 Haiku
-        tpd:
-          code: L-6120CF2D
-          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
-            (doubled for cross-region calls)
+        tpd: null
         tpm:
           code: L-DCADBC78
           name: Cross-region model inference tokens per minute for Anthropic Claude
@@ -206,8 +199,7 @@ models:
   - INFERENCE_PROFILE
   model_id: anthropic.claude-3-haiku-20240307-v1:0
   provider: Anthropic
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: anthropic.claude-3-haiku-20240307-v1:0:200k
   provider: Anthropic
 - endpoints:
@@ -234,9 +226,9 @@ models:
           name: Cross-region model inference requests per minute for Anthropic Claude
             Haiku 4.5
         tpd:
-          code: L-6120CF2D
-          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
-            (doubled for cross-region calls)
+          code: L-B5C049AE
+          name: Global cross-region model inference tokens per day for Anthropic Claude
+            Haiku 4.5
         tpm:
           code: L-58BE175A
           name: Cross-region model inference tokens per minute for Anthropic Claude
@@ -478,8 +470,7 @@ models:
   - INFERENCE_PROFILE
   model_id: meta.llama3-1-70b-instruct-v1:0
   provider: Meta
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: meta.llama3-1-70b-instruct-v1:0:128k
   provider: Meta
 - endpoints:
@@ -501,8 +492,7 @@ models:
   - INFERENCE_PROFILE
   model_id: meta.llama3-1-8b-instruct-v1:0
   provider: Meta
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: meta.llama3-1-8b-instruct-v1:0:128k
   provider: Meta
 - endpoints:
@@ -802,63 +792,117 @@ models:
   - INFERENCE_PROFILE
   model_id: stability.stable-fast-upscale-v1:0
   provider: Stability AI
-- endpoints: {}
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
   inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-control-sketch-v1:0
   provider: Stability AI
-- endpoints: {}
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
   inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-control-structure-v1:0
   provider: Stability AI
-- endpoints: {}
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
   inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-erase-object-v1:0
   provider: Stability AI
-- endpoints: {}
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
   inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-inpaint-v1:0
   provider: Stability AI
-- endpoints: {}
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
   inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-remove-background-v1:0
   provider: Stability AI
-- endpoints: {}
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
   inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-search-recolor-v1:0
   provider: Stability AI
-- endpoints: {}
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
   inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-search-replace-v1:0
   provider: Stability AI
-- endpoints: {}
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
   inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: stability.stable-image-style-guide-v1:0
   provider: Stability AI
-- endpoints: {}
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
   inference_profiles:
   - us
   inference_types:
@@ -869,10 +913,7 @@ models:
     us:
       quotas:
         concurrent: null
-        rpm:
-          code: L-42A5F078
-          name: Cross-region model inference requests per minute for Stable Image
-            Style Transfer
+        rpm: null
         tpd: null
         tpm: null
   inference_profiles:
@@ -896,13 +937,27 @@ models:
   - INFERENCE_PROFILE
   model_id: twelvelabs.pegasus-1-2-v1:0
   provider: TwelveLabs
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE
   model_id: writer.palmyra-x4-v1:0
   provider: Writer
-- inference_profiles:
+- endpoints:
+    us:
+      quotas:
+        concurrent: null
+        rpm: null
+        tpd: null
+        tpm: null
+  inference_profiles:
   - us
   inference_types:
   - INFERENCE_PROFILE

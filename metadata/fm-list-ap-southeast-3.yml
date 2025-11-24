@@ -27,12 +27,10 @@ models:
   - ON_DEMAND
   model_id: amazon.nova-lite-v1:0
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.nova-lite-v1:0:24k
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.nova-lite-v1:0:300k
   provider: Amazon
 - endpoints:
@@ -52,12 +50,10 @@ models:
   - INFERENCE_PROFILE
   model_id: amazon.nova-micro-v1:0
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.nova-micro-v1:0:128k
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.nova-micro-v1:0:24k
   provider: Amazon
 - endpoints:
@@ -88,12 +84,10 @@ models:
   - ON_DEMAND
   model_id: amazon.nova-pro-v1:0
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.nova-pro-v1:0:24k
   provider: Amazon
-- endpoints: {}
-  inference_types: []
+- inference_types: []
   model_id: amazon.nova-pro-v1:0:300k
   provider: Amazon
 - endpoints:

@@ -80,15 +80,20 @@ models:
     base:
       quotas:
         concurrent: null
-        rpm: null
+        rpm:
+          code: L-DF0E34D4
+          name: On-demand model inference requests per minute for Amazon Titan Multimodal
+            Embeddings G1
         tpd: null
-        tpm: null
+        tpm:
+          code: L-ABC24664
+          name: On-demand model inference tokens per minute for Amazon Titan Multimodal
+            Embeddings G1
   inference_types:
   - ON_DEMAND
   model_id: amazon.titan-embed-image-v1
   provider: Amazon
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: amazon.titan-embed-image-v1:0
   provider: Amazon
@@ -143,8 +148,7 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-text-express-v1
   provider: Amazon
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: amazon.titan-text-express-v1:0:8k
   provider: Amazon
@@ -165,8 +169,7 @@ models:
   - ON_DEMAND
   model_id: amazon.titan-text-lite-v1
   provider: Amazon
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: amazon.titan-text-lite-v1:0:4k
   provider: Amazon
@@ -224,14 +227,25 @@ models:
           code: L-8CE99163
           name: On-demand model inference tokens per minute for Anthropic Claude 3
             Haiku
+    eu:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-616A3F5B
+          name: Cross-region model inference requests per minute for Anthropic Claude
+            3 Haiku
+        tpd: null
+        tpm:
+          code: L-DCADBC78
+          name: Cross-region model inference tokens per minute for Anthropic Claude
+            3 Haiku
   inference_profiles:
   - eu
   inference_types:
   - ON_DEMAND
   model_id: anthropic.claude-3-haiku-20240307-v1:0
   provider: Anthropic
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: anthropic.claude-3-haiku-20240307-v1:0:48k
   provider: Anthropic
@@ -248,19 +262,29 @@ models:
           code: L-4C35BB2A
           name: On-demand model inference tokens per minute for Anthropic Claude 3
             Sonnet
+    eu:
+      quotas:
+        concurrent: null
+        rpm:
+          code: L-46591118
+          name: Cross-region model inference requests per minute for Anthropic Claude
+            3 Sonnet
+        tpd: null
+        tpm:
+          code: L-5DF13F64
+          name: Cross-region model inference tokens per minute for Anthropic Claude
+            3 Sonnet
   inference_profiles:
   - eu
   inference_types:
   - ON_DEMAND
   model_id: anthropic.claude-3-sonnet-20240229-v1:0
   provider: Anthropic
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: anthropic.claude-3-sonnet-20240229-v1:0:200k
   provider: Anthropic
-- endpoints: {}
-  inference_types:
+- inference_types:
   - PROVISIONED
   model_id: anthropic.claude-3-sonnet-20240229-v1:0:28k
   provider: Anthropic
@@ -273,9 +297,9 @@ models:
           name: Cross-region model inference requests per minute for Anthropic Claude
             Haiku 4.5
         tpd:
-          code: L-6120CF2D
-          name: Model invocation max tokens per day for Anthropic Claude Haiku 4.5
-            (doubled for cross-region calls)
+          code: L-B5C049AE
+          name: Global cross-region model inference tokens per day for Anthropic Claude
+            Haiku 4.5
         tpm:
           code: L-58BE175A
           name: Cross-region model inference tokens per minute for Anthropic Claude
