@@ -115,7 +115,6 @@ class OutputGenerator:
     
     def _get_html_template(self):
         """Load HTML template from file"""
-        import os
         template_path = os.path.join(
             os.path.dirname(__file__), 
             '..', 'templates', 'report.html'

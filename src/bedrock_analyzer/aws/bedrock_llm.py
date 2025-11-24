@@ -4,7 +4,7 @@ import boto3
 import sys
 from typing import Optional, Dict, List
 
-from bedrock_analyzer.aws.bedrock import ENDPOINT_DESCRIPTIONS
+from bedrock_analyzer.aws.bedrock import get_endpoint_descriptions
 
 
 def extract_common_name(region: str, model_id: str, fm_model_id: str) -> Optional[str]:
@@ -129,7 +129,8 @@ def extract_quota_codes(region: str, model_id: str, fm_model_id: str,
     
     quotas_text = "\n".join([f"- {q['name']} (code: {q['code']})" for q in matching_quotas])
     
-    endpoint_desc = ENDPOINT_DESCRIPTIONS.get(endpoint_type, endpoint_type)
+    endpoint_descriptions = get_endpoint_descriptions()
+    endpoint_desc = endpoint_descriptions.get(endpoint_type, endpoint_type)
     
     prompt = f"""For the Bedrock model "{fm_model_id}" with {endpoint_desc} endpoint, identify which quota codes correspond to:
 - TPM (Tokens Per Minute)

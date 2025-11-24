@@ -1,5 +1,6 @@
 """Foundation model list management"""
 
+import os
 import logging
 from typing import List, Dict
 
@@ -7,7 +8,10 @@ from bedrock_analyzer.utils.yaml_handler import load_yaml, save_yaml
 from bedrock_analyzer.aws.bedrock import (
     fetch_foundation_models,
     fetch_all_inference_profiles,
-    build_profile_map
+    build_profile_map,
+    discover_prefix_mapping,
+    QUOTA_KEYWORD_ON_DEMAND,
+    QUOTA_KEYWORD_GLOBAL
 )
 
 logger = logging.getLogger(__name__)
@@ -45,10 +49,58 @@ def save_models(filepath: str, models: List[Dict]):
 def refresh_region(region: str):
     """Refresh foundation models for a region
     
+    Also refreshes prefix mapping, merging with existing prefixes.
+    
     Args:
         region: AWS region name
     """
     logger.info(f"\nProcessing region: {region}")
+    
+    # Refresh prefix mapping - merge with existing
+    logger.info("  Refreshing prefix mapping...")
+    discovered = discover_prefix_mapping(region)
+    
+    # Load existing prefixes if file exists
+    existing_prefixes = {}
+    prefix_file = 'metadata/prefix-mapping.yml'
+    if os.path.exists(prefix_file):
+        try:
+            existing_data = load_yaml(prefix_file)
+            existing_prefixes = {p['prefix']: p for p in existing_data.get('prefixes', [])}
+        except Exception:
+            pass
+    
+    # Manual entries (always include)
+    manual_entries = [
+        {
+            'prefix': 'base',
+            'quota_keyword': QUOTA_KEYWORD_ON_DEMAND,
+            'description': 'on-demand',
+            'is_regional': False,
+            'source': 'manual'
+        },
+        {
+            'prefix': 'global',
+            'quota_keyword': QUOTA_KEYWORD_GLOBAL,
+            'description': 'global inference profile',
+            'is_regional': False,
+            'source': 'manual'
+        }
+    ]
+    
+    # Merge: manual entries + existing + newly discovered
+    for entry in manual_entries:
+        existing_prefixes[entry['prefix']] = entry
+    
+    for entry in discovered:
+        if entry['prefix'] not in existing_prefixes:
+            existing_prefixes[entry['prefix']] = entry
+    
+    # Sort by prefix for consistency
+    all_prefixes = sorted(existing_prefixes.values(), key=lambda x: x['prefix'])
+    
+    save_yaml(prefix_file, {'prefixes': all_prefixes})
+    logger.info(f"  ✓ Prefix mapping refreshed ({len(discovered)} discovered, {len(all_prefixes)} total)")
     
     output_file = f'metadata/fm-list-{region}.yml'
     

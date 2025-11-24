@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 from bedrock_analyzer.utils.yaml_handler import load_yaml, save_yaml
 from bedrock_analyzer.aws.servicequotas import fetch_service_quotas
 from bedrock_analyzer.aws.bedrock_llm import extract_common_name, extract_quota_codes
-from bedrock_analyzer.aws.bedrock import ENDPOINT_QUOTA_KEYWORDS
+from bedrock_analyzer.aws.bedrock import get_endpoint_quota_keywords
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +143,8 @@ class QuotaMapper:
         """Find quotas matching the common name and endpoint type"""
         matching = []
         
-        required_keyword = ENDPOINT_QUOTA_KEYWORDS.get(endpoint_type)
+        endpoint_quota_keywords = get_endpoint_quota_keywords()
+        required_keyword = endpoint_quota_keywords.get(endpoint_type)
         if not required_keyword:
             return matching
         

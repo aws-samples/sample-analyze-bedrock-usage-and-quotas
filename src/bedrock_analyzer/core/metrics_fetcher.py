@@ -1,12 +1,12 @@
 """CloudWatch metrics fetching for Bedrock usage analysis"""
 
 import os
-import boto3
 import numpy as np
 from datetime import datetime, timedelta, timezone
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
+from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,7 @@ class CloudWatchMetricsFetcher:
         result = {}
         
         # Sort timestamps and align all data arrays
+        # Technique: Create sorted indices from timestamps, then apply same reordering to all metric arrays
         if timestamps:
             sorted_indices = sorted(range(len(timestamps)), key=lambda i: timestamps[i])
             timestamps = [timestamps[i] for i in sorted_indices]
@@ -41,61 +42,81 @@ class CloudWatchMetricsFetcher:
         output_tokens = all_data['output_tokens']
         
         if input_tokens and output_tokens:
-            min_len = min(len(input_tokens), len(output_tokens))
-            total_tokens = [input_tokens[i] + output_tokens[i] for i in range(min_len)]
-            tpm_values = [t / period_minutes for t in total_tokens]
+            # Calculate TPM only for timestamps where BOTH input and output exist (not None)
+            total_tokens = []
+            valid_timestamps = []
             
-            # Fill missing timestamps for TPM
-            ts_strings = [ts.isoformat() for ts in timestamps[:min_len]]
-            filled_ts, filled_tpm = self._fill_missing_timestamps(ts_strings, tpm_values, period)
+            for i, ts in enumerate(timestamps):
+                inp_val = input_tokens[i] if i < len(input_tokens) else None
+                out_val = output_tokens[i] if i < len(output_tokens) else None
+                
+                if inp_val is not None and out_val is not None:
+                    total_tokens.append(inp_val + out_val)
+                    valid_timestamps.append(ts)
             
-            result['TPM'] = {
-                'timestamps': filled_ts,
-                'values': filled_tpm
-            }
+            if total_tokens:
+                tpm_values = [t / period_minutes for t in total_tokens]
+                
+                # Fill missing timestamps for TPM
+                ts_strings = [ts.isoformat() for ts in valid_timestamps]
+                filled_ts, filled_tpm = self._fill_missing_timestamps(ts_strings, tpm_values, period)
+                
+                result['TPM'] = {
+                    'timestamps': filled_ts,
+                    'values': filled_tpm
+                }
+                
+                # Also include raw token counts (with None values preserved)
+                ts_strings_all = [ts.isoformat() for ts in timestamps]
+                filled_ts_input, filled_input = self._fill_missing_timestamps(ts_strings_all, input_tokens, period)
+                filled_ts_output, filled_output = self._fill_missing_timestamps(ts_strings_all, output_tokens, period)
+                
+                result['InputTokenCount'] = {
+                    'timestamps': filled_ts_input,
+                    'values': filled_input
+                }
+                result['OutputTokenCount'] = {
+                    'timestamps': filled_ts_output,
+                    'values': filled_output
+                }
             
-            # Also include raw token counts (filled)
-            filled_ts_input, filled_input = self._fill_missing_timestamps(ts_strings, input_tokens[:min_len], period)
-            filled_ts_output, filled_output = self._fill_missing_timestamps(ts_strings, output_tokens[:min_len], period)
-            
-            result['InputTokenCount'] = {
-                'timestamps': filled_ts_input,
-                'values': filled_input
-            }
-            result['OutputTokenCount'] = {
-                'timestamps': filled_ts_output,
-                'values': filled_output
-            }
-            
-            if time_period != "1hour":
+            if time_period != "1hour" and total_tokens:
                 # TPD: Aggregate tokens by day (sum all tokens within each day)
                 # Note: TPD uses daily aggregation, not granularity-based filling
-                daily_timestamps, daily_totals = self._aggregate_tokens_by_day(ts_strings, total_tokens)
+                ts_strings_valid = [ts.isoformat() for ts in valid_timestamps]
+                daily_timestamps, daily_totals = self._aggregate_tokens_by_day(ts_strings_valid, total_tokens)
                 result['TPD'] = {
                     'timestamps': daily_timestamps,
                     'values': daily_totals
                 }
         
         if all_data['invocations']:
-            rpm_values = [inv / period_minutes for inv in all_data['invocations']]
-            ts_strings = [ts.isoformat() for ts in timestamps[:len(rpm_values)]]
+            # Filter out None values for RPM calculation
+            rpm_values = []
+            rpm_timestamps = []
+            for i, inv in enumerate(all_data['invocations']):
+                if inv is not None:
+                    rpm_values.append(inv / period_minutes)
+                    rpm_timestamps.append(timestamps[i])
             
-            # Fill missing timestamps for RPM
-            filled_ts_rpm, filled_rpm = self._fill_missing_timestamps(ts_strings, rpm_values, period)
-            result['RPM'] = {
-                'timestamps': filled_ts_rpm,
-                'values': filled_rpm
-            }
-            
-            # Also include raw invocations count (filled)
-            filled_ts_inv, filled_inv = self._fill_missing_timestamps(ts_strings, all_data['invocations'], period)
-            result['Invocations'] = {
-                'timestamps': filled_ts_inv,
-                'values': filled_inv
-            }
+            if rpm_values:
+                ts_strings = [ts.isoformat() for ts in rpm_timestamps]
+                filled_ts_rpm, filled_rpm = self._fill_missing_timestamps(ts_strings, rpm_values, period)
+                result['RPM'] = {
+                    'timestamps': filled_ts_rpm,
+                    'values': filled_rpm
+                }
+                
+                # Also include raw invocations count (with None preserved)
+                ts_strings_all = [ts.isoformat() for ts in timestamps]
+                filled_ts_inv, filled_inv = self._fill_missing_timestamps(ts_strings_all, all_data['invocations'], period)
+                result['Invocations'] = {
+                    'timestamps': filled_ts_inv,
+                    'values': filled_inv
+                }
         
         if all_data['throttles']:
-            ts_strings = [ts.isoformat() for ts in timestamps[:len(all_data['throttles'])]]
+            ts_strings = [ts.isoformat() for ts in timestamps]
             filled_ts, filled_vals = self._fill_missing_timestamps(ts_strings, all_data['throttles'], period)
             result['InvocationThrottles'] = {
                 'timestamps': filled_ts,
@@ -103,7 +124,7 @@ class CloudWatchMetricsFetcher:
             }
         
         if all_data['client_errors']:
-            ts_strings = [ts.isoformat() for ts in timestamps[:len(all_data['client_errors'])]]
+            ts_strings = [ts.isoformat() for ts in timestamps]
             filled_ts, filled_vals = self._fill_missing_timestamps(ts_strings, all_data['client_errors'], period)
             result['InvocationClientErrors'] = {
                 'timestamps': filled_ts,
@@ -111,7 +132,7 @@ class CloudWatchMetricsFetcher:
             }
         
         if all_data['server_errors']:
-            ts_strings = [ts.isoformat() for ts in timestamps[:len(all_data['server_errors'])]]
+            ts_strings = [ts.isoformat() for ts in timestamps]
             filled_ts, filled_vals = self._fill_missing_timestamps(ts_strings, all_data['server_errors'], period)
             result['InvocationServerErrors'] = {
                 'timestamps': filled_ts,
@@ -119,7 +140,7 @@ class CloudWatchMetricsFetcher:
             }
         
         if all_data['latency']:
-            ts_strings = [ts.isoformat() for ts in timestamps[:len(all_data['latency'])]]
+            ts_strings = [ts.isoformat() for ts in timestamps]
             filled_ts, filled_vals = self._fill_missing_timestamps(ts_strings, all_data['latency'], period)
             result['InvocationLatency'] = {
                 'timestamps': filled_ts,
@@ -132,14 +153,13 @@ class CloudWatchMetricsFetcher:
         
         return result
     
-    def fetch_all_data_mixed_granularity(self, model_ids, granularity_config, cached_data=None):
+    def fetch_all_data_mixed_granularity(self, model_ids, granularity_config):
         """Fetch data at configured granularities for all periods (parallel fetching)
-        Returns cached data that can be sliced for different periods
+        Returns data that can be sliced for different periods
         
         Args:
             model_ids: List of model IDs to fetch
             granularity_config: Dict mapping time_period to granularity in seconds
-            cached_data: Optional dict with previously fetched data to reuse
         """
         logger.info(f"  Starting parallel CloudWatch data fetch...")
         logger.info(f"  Granularity config: {granularity_config}")
@@ -148,48 +168,40 @@ class CloudWatchMetricsFetcher:
         
         # Determine which unique periods are needed and their time ranges
         period_ranges = {}
+        """Example: 
+            granularity_config = {
+                '1hour': 60,     # 1 minute
+                '1day': 60,      # 1 minute
+                '7days': 300,    # 5 minutes
+                '14days': 300,   # 5 minutes
+                '30days': 3600   # 1 hour
+            }
+
+            # Results in:
+            period_ranges = {
+                60: [0.041667, 1],      # 1-min granularity for 1hour (1/24 day = 0.041667) and 1day
+                300: [7, 14],           # 5-min granularity for 7days and 14days
+                3600: [30]              # 1-hour granularity for 30days
+            }
+        """
         for time_period, period in granularity_config.items():
+            # The period here is the granularity period like 1 min, 5 mins or 1 hour
             if period not in period_ranges:
                 period_ranges[period] = []
             # Map time period to days
             days = {'1hour': 1/24, '1day': 1, '7days': 7, '14days': 14, '30days': 30}[time_period]
             period_ranges[period].append(days)
         
-        # For each period, check if we can reuse cached data
+        # Build fetch configs for each granularity
         fetch_configs = {}
         for period, day_list in period_ranges.items():
             max_days = max(day_list)
             target_start = end_time - timedelta(days=max_days)
             
-            # Check if we have cached data for this granularity
-            can_reuse = False
-            if cached_data:
-                for model_id in model_ids:
-                    if model_id in cached_data and period in cached_data[model_id]:
-                        cached_period_data = cached_data[model_id][period]
-                        if cached_period_data.get('timestamps'):
-                            # Parse cached timestamps to find earliest
-                            cached_timestamps = [datetime.fromisoformat(ts.replace('Z', '+00:00')) 
-                                               for ts in cached_period_data['timestamps']]
-                            cached_start = min(cached_timestamps)
-                            
-                            # If cached data covers part of our range, fetch only the gap
-                            if cached_start > target_start:
-                                logger.info(f"  Reusing cached {period}s data, fetching gap from {target_start} to {cached_start}")
-                                fetch_configs[period] = {
-                                    'start_time': target_start,
-                                    'end_time': cached_start,
-                                    'reuse_cache': True
-                                }
-                                can_reuse = True
-                                break
-            
-            if not can_reuse:
-                fetch_configs[period] = {
-                    'start_time': target_start,
-                    'end_time': end_time,
-                    'reuse_cache': False
-                }
+            fetch_configs[period] = {
+                'start_time': target_start,
+                'end_time': end_time
+            }
         
         # Calculate total chunks for progress tracking
         self.chunks_completed = 0
@@ -201,7 +213,7 @@ class CloudWatchMetricsFetcher:
         
         logger.info(f"  Fetching {len(model_ids)} model(s) x {len(fetch_configs)} granularity(ies) = {self.total_chunks} total chunks")
         
-        all_cached_data = {}
+        all_fetched_data = {}
         
         # Parallel fetching across all model IDs
         max_workers = os.cpu_count() or 4
@@ -221,79 +233,52 @@ class CloudWatchMetricsFetcher:
                     futures.append((future, model_id, period))
             
             for future, model_id, period in futures:
-                if model_id not in all_cached_data:
+                if model_id not in all_fetched_data:
                     logger.info(f"  Fetching data for {model_id} (period={period}s)...")
-                    all_cached_data[model_id] = {'end_time': end_time}
+                    all_fetched_data[model_id] = {'end_time': end_time}
                 
                 try:
                     new_data = future.result()
-                    
-                    # Check if we need to merge with cached data
-                    if fetch_configs[period].get('reuse_cache') and cached_data and model_id in cached_data:
-                        if period in cached_data[model_id]:
-                            cached_period_data = cached_data[model_id][period]
-                            # Merge: new_data (older) + cached_data (newer)
-                            merged_data = self._merge_time_series(new_data, cached_period_data)
-                            all_cached_data[model_id][period] = merged_data
-                            logger.info(f"    Merged with cached data for {model_id} (period={period}s)")
-                        else:
-                            all_cached_data[model_id][period] = new_data
-                    else:
-                        all_cached_data[model_id][period] = new_data
+                    all_fetched_data[model_id][period] = new_data
                         
                 except Exception as e:
                     logger.info(f"    Warning: Failed to fetch {period}s data for {model_id}: {e}")
-                    all_cached_data[model_id][period] = {
+                    all_fetched_data[model_id][period] = {
                         'timestamps': [], 
-                        'data': {'invocations': [], 'input_tokens': [], 'output_tokens': [], 'throttles': []}, 
+                        'data': {
+                            'invocations': [], 
+                            'input_tokens': [], 
+                            'output_tokens': [], 
+                            'throttles': [],
+                            'client_errors': [],
+                            'server_errors': [],
+                            'latency': []
+                        }, 
                         'period': period
                     }
         
         logger.info(f"  Parallel fetch complete")
         
-        return all_cached_data
-    
-    def _merge_time_series(self, older_data, newer_data):
-        """Merge older and newer time series data
-        
-        Args:
-            older_data: Dict with 'timestamps' and 'data' from earlier time range
-            newer_data: Dict with 'timestamps' and 'data' from later time range
-            
-        Returns:
-            Merged dict with combined timestamps and data
-        """
-        merged = {
-            'timestamps': older_data['timestamps'] + newer_data['timestamps'],
-            'data': {},
-            'period': older_data.get('period', newer_data.get('period'))
-        }
-        
-        # Merge each metric
-        for metric in older_data['data'].keys():
-            merged['data'][metric] = (
-                older_data['data'][metric] + newer_data['data'].get(metric, [])
-            )
-        
-        return merged
+        return all_fetched_data
     
     def _fetch_raw_data(self, model_id, start_time, end_time, period):
         """Fetch raw CloudWatch data for a time range"""
         try:
             chunks = self._chunk_time_range(start_time, end_time, period)
             
-            all_timestamps = []
-            all_data = {
-                'invocations': [],
-                'input_tokens': [],
-                'output_tokens': [],
-                'throttles': [],
-                'client_errors': [],
-                'server_errors': [],
-                'latency': []
+            # Store timestamps per metric for proper alignment
+            all_data_with_timestamps = {
+                'invocations': {'timestamps': [], 'values': []},
+                'input_tokens': {'timestamps': [], 'values': []},
+                'output_tokens': {'timestamps': [], 'values': []},
+                'throttles': {'timestamps': [], 'values': []},
+                'client_errors': {'timestamps': [], 'values': []},
+                'server_errors': {'timestamps': [], 'values': []},
+                'latency': {'timestamps': [], 'values': []}
             }
             
             for i, (chunk_start, chunk_end) in enumerate(chunks, 1):
+                # All metrics are using "Sum" statistic aggregation method, except InvocationLatency which is using "Average"
                 response = self.cloudwatch_client.get_metric_data(
                     MetricDataQueries=[
                         self._create_query('invocations', 'Invocations', model_id, period),
@@ -315,18 +300,32 @@ class CloudWatchMetricsFetcher:
                     pct = int(self.chunks_completed / self.total_chunks * 100)
                     logger.info(f"    Progress: {self.chunks_completed}/{self.total_chunks} chunks ({pct}%)")
                 
-                # Collect timestamps only once (from first metric with data)
-                timestamps_collected = False
+                # Collect timestamps AND values for each metric separately
                 for result in response['MetricDataResults']:
                     metric_id = result['Id']
-                    if result['Values']:
-                        all_data[metric_id].extend(result['Values'])
-                        # Only collect timestamps once per chunk
-                        if not timestamps_collected and result['Timestamps']:
-                            all_timestamps.extend(result['Timestamps'])
-                            timestamps_collected = True
+                    if result['Values'] and result['Timestamps']:
+                        all_data_with_timestamps[metric_id]['values'].extend(result['Values'])
+                        all_data_with_timestamps[metric_id]['timestamps'].extend(result['Timestamps'])
             
-            # Sort by timestamp
+            # Align data by timestamps: collect all unique timestamps and map values
+            all_timestamps_set = set()
+            for metric_data in all_data_with_timestamps.values():
+                all_timestamps_set.update(metric_data['timestamps'])
+            
+            all_timestamps = sorted(list(all_timestamps_set))
+            
+            # Create timestamp-to-value mapping for each metric
+            all_data = {}
+            for metric_id, metric_data in all_data_with_timestamps.items():
+                # Build mapping
+                ts_to_value = {ts: val for ts, val in zip(metric_data['timestamps'], metric_data['values'])}
+                # Align to all_timestamps (use None for missing timestamps)
+                all_data[metric_id] = [ts_to_value.get(ts) for ts in all_timestamps]
+            
+            # Sort timestamps chronologically and reorder all metrics to match
+            # CloudWatch doesn't guarantee order, especially across multiple chunks
+            # This ensures data integrity: each metric value stays aligned with its timestamp
+            # Technique: Create sorted indices from timestamps, then apply same reordering to all metric arrays
             if all_timestamps:
                 sorted_indices = sorted(range(len(all_timestamps)), key=lambda i: all_timestamps[i])
                 all_timestamps = [all_timestamps[i] for i in sorted_indices]
@@ -341,11 +340,27 @@ class CloudWatchMetricsFetcher:
             }
         except Exception as e:
             logger.info(f"    Warning: Could not fetch data: {e}")
-            return {'timestamps': [], 'data': {'invocations': [], 'input_tokens': [], 'output_tokens': [], 'throttles': []}, 'period': period}
+            return {
+                'timestamps': [], 
+                'data': {
+                    'invocations': [], 
+                    'input_tokens': [], 
+                    'output_tokens': [], 
+                    'throttles': [],
+                    'client_errors': [],
+                    'server_errors': [],
+                    'latency': []
+                }, 
+                'period': period
+            }
     
-    def slice_and_process_data(self, cached_data, time_period, granularity_config):
-        """Slice cached data for a specific time period and process into time series"""
-        end_time = cached_data['end_time']
+    def slice_and_process_data(self, fetched_data, time_period, granularity_config):
+        """
+        Slice fetched data for a specific time period and process into time series.
+        This method is needed because the way the data is fetched is that this tool fetches data with longest time window (e.g. 30 days).
+        To present the statistics for each time window (1 hour, 1 day, 7 days, 14 days, 30 days), slicing is performed.
+        """
+        end_time = fetched_data['end_time']
         period = granularity_config[time_period]
         
         if time_period == '1hour':
@@ -362,21 +377,38 @@ class CloudWatchMetricsFetcher:
             return self._empty_time_series(time_period)
         
         # Use the dataset with the configured period
-        if period not in cached_data:
+        if period not in fetched_data:
             logger.info(f"    Warning: No data at {period}s granularity for {time_period}")
             return self._empty_time_series(time_period)
         
-        return self._slice_from_dataset(cached_data[period], start_time, end_time, time_period)
+        return self._slice_from_dataset(fetched_data[period], start_time, end_time, time_period)
     
     def _slice_from_dataset(self, dataset, start_time, end_time, time_period):
-        """Slice data from a single dataset by time range"""
+        """Slice data from a single dataset by time range
+        
+        Dataset structure:
+        {
+            'timestamps': [datetime, datetime, ...],
+            'data': {
+                'invocations': [value, value, ...],
+                'input_tokens': [value, value, ...],
+                'output_tokens': [value, value, ...],
+                'throttles': [value, value, ...],
+                'client_errors': [value, value, ...],
+                'server_errors': [value, value, ...],
+                'latency': [value, value, ...]
+            },
+            'period': 60|300|3600  # granularity in seconds
+        }
+        """
         timestamps = dataset['timestamps']
         data = dataset['data']
         period = dataset['period']
         
-        # Filter by time range
+        # Find timestamps that fall within the requested time range
         indices = [i for i, ts in enumerate(timestamps) if start_time <= ts <= end_time]
         
+        # If empty
         if not indices:
             return self._empty_time_series(time_period)
         
@@ -434,6 +466,7 @@ class CloudWatchMetricsFetcher:
             metrics['TPD'] = {'values': [], 'p50': 0.0, 'p90': 0.0, 'count': 0, 'sum': 0.0, 'avg': 0.0}
         return metrics
     
+    # The default stat = "Sum" is crucial so that by default it is aggregating the data points by summing them within the period (e.g. 1 min, 5 mins, 1 hour)
     def _create_query(self, query_id, metric_name, model_id, period, stat='Sum'):
         """Create a metric query"""
         return {
@@ -507,8 +540,6 @@ class CloudWatchMetricsFetcher:
         Returns:
             tuple: (daily_timestamps, daily_totals) where each entry represents one 24-hour window
         """
-        from datetime import datetime, timedelta
-        from collections import defaultdict
         
         if not timestamps or not token_values:
             return [], []

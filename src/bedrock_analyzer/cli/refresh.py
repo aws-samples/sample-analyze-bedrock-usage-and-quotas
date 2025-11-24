@@ -5,12 +5,13 @@ import logging
 import traceback
 import argparse
 
-from bedrock_analyzer.utils.yaml_handler import load_yaml
+from bedrock_analyzer.utils.yaml_handler import load_yaml, save_yaml
 from bedrock_analyzer.metadata.regions import refresh_regions
 from bedrock_analyzer.metadata.fm_list import refresh_region, refresh_all_regions
 from bedrock_analyzer.metadata.quota_mapper import QuotaMapper
 from bedrock_analyzer.metadata.quota_index import QuotaIndexGenerator
 from bedrock_analyzer.utils.ui import select_quota_mapping_params
+from bedrock_analyzer.aws.bedrock import discover_prefix_mapping, QUOTA_KEYWORD_ON_DEMAND, QUOTA_KEYWORD_GLOBAL
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)

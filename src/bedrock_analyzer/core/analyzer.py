@@ -12,7 +12,7 @@ from bedrock_analyzer.core.user_inputs import UserInputs
 from bedrock_analyzer.core.profile_fetcher import InferenceProfileFetcher
 from bedrock_analyzer.core.metrics_fetcher import CloudWatchMetricsFetcher
 from bedrock_analyzer.core.output_generator import OutputGenerator
-from bedrock_analyzer.aws.bedrock import REGIONAL_PROFILE_PREFIXES
+from bedrock_analyzer.aws.bedrock import get_regional_profile_prefixes
 
 logger = logging.getLogger(__name__)
 
@@ -120,11 +120,14 @@ class BedrockAnalyzer:
                         logger.info(f"  Warning: Could not fetch {quota_type} quota for {model_id}: {e}")
         
         # Apply 2x multiplier for TPD on regional cross-region profiles
-        if profile_prefix in REGIONAL_PROFILE_PREFIXES and quotas['tpd'] and quotas['tpd']['value'] is not None:
+        regional_profile_prefixes = get_regional_profile_prefixes()
+        if profile_prefix in regional_profile_prefixes and quotas['tpd'] and quotas['tpd']['value'] is not None:
             quotas['tpd']['value'] = quotas['tpd']['value'] * 2
         
         return quotas
     
+    # This aggregates values within 1 Bedrock application profile
+    # The aggregation across application inference profiles is implemented in metrics_fetcher.py
     def _calculate_stats_from_time_series(self, ts_data, time_period):
         """Calculate statistics from time series data"""
         stats = self.metrics_fetcher._initialize_metrics(time_period)
@@ -235,10 +238,9 @@ class BedrockAnalyzer:
             # Data reuse optimization: if all periods use same granularity, only fetch once
             # If granularities differ, fetch separately for each unique granularity
             logger.info(f"  Fetching data with configured granularities (parallel)...")
-            cached_data_all_profiles = self.metrics_fetcher.fetch_all_data_mixed_granularity(
+            fetched_data_all_profiles = self.metrics_fetcher.fetch_all_data_mixed_granularity(
                 final_model_ids, 
-                self.granularity_config,
-                cached_data=None  # First fetch, no cache
+                self.granularity_config
             )
             
             model_results = {}
@@ -253,10 +255,10 @@ class BedrockAnalyzer:
                 
                 try:
                     for final_model_id in final_model_ids:
-                        # Slice data from cached datasets
-                        if final_model_id in cached_data_all_profiles:
+                        # Slice data from fetched datasets
+                        if final_model_id in fetched_data_all_profiles:
                             ts_data = self.metrics_fetcher.slice_and_process_data(
-                                cached_data_all_profiles[final_model_id], 
+                                fetched_data_all_profiles[final_model_id], 
                                 time_period,
                                 self.granularity_config
                             )
@@ -277,7 +279,6 @@ class BedrockAnalyzer:
                     time_series_data[time_period] = period_time_series
                     
                 except Exception as e:
-                    import traceback
                     logger.info(f"\n  ERROR in {time_period} processing:")
                     logger.info(f"  Error type: {type(e).__name__}")
                     logger.info(f"  Error message: {e}")

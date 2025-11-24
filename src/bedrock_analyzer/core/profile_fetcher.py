@@ -2,7 +2,7 @@
 
 import logging
 
-from bedrock_analyzer.aws.bedrock import DEFAULT_REGION_PREFIX_MAP
+from bedrock_analyzer.aws.bedrock import get_default_region_prefix_map
 
 logger = logging.getLogger(__name__)
 
@@ -12,50 +12,8 @@ class InferenceProfileFetcher:
     
     def __init__(self, bedrock_client):
         self.bedrock_client = bedrock_client
-        self.prefix_map = self._discover_prefix_map()
+        self.prefix_map = get_default_region_prefix_map()
         self._all_profiles_cache = None  # Cache for all profiles
-    
-    def _discover_prefix_map(self):
-        """Dynamically discover region prefix to system profile prefix mapping
-    
-        Maps AWS region prefixes (us, eu, ap) to Bedrock system profile prefixes (us, eu, apac).
-        Example: 'ap' regions → 'apac' system profiles. Used to construct correct profile IDs.
-        """
-        try:
-            response = self.bedrock_client.list_inference_profiles(maxResults=1000)
-        
-            # Collect all profiles with pagination
-            all_profiles = []
-            while True:
-                all_profiles.extend(response['inferenceProfileSummaries'])
-                
-                if 'nextToken' in response:
-                    response = self.bedrock_client.list_inference_profiles(
-                        maxResults=1000,
-                        nextToken=response['nextToken']
-                    )
-                else:
-                    break
-            
-            # Build mapping from region prefixes to system profile prefixes
-            prefix_map = {}
-            for profile in all_profiles:
-                if profile['type'] == 'SYSTEM_DEFINED' and '.' in profile['inferenceProfileId']:
-                    system_prefix = profile['inferenceProfileId'].split('.')[0]
-                    model_arns = [m['modelArn'] for m in profile['models']]
-                    
-                    if len(model_arns) > 1:
-                        regions = [arn.split(':')[3] for arn in model_arns]
-                        region_prefixes = set(r.split('-')[0] for r in regions)
-                        
-                        if len(region_prefixes) == 1:
-                            region_prefix = list(region_prefixes)[0]
-                            prefix_map[region_prefix] = system_prefix
-            
-            return prefix_map
-        except Exception as e:
-            logger.info(f"Warning: Could not discover prefix map, using defaults: {e}")
-            return DEFAULT_REGION_PREFIX_MAP
     
     def find_profiles(self, model_id, profile_prefix):
         """Find system-defined profile and all application profiles based on it
