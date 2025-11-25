@@ -1,5 +1,0 @@
-boto3
-numpy
-jinja2
-pyyaml
-defusedcsv
